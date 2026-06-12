@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="refugeSeek Scotland — Live AI-powered platform connecting people facing homelessness to emergency shelter, food, clothing and support across Scotland.">
+<title>refugeSeek Scotland — Live Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* ── TOKENS ── */
+:root{
+  --teal:#0F7B6C;--teal-light:#E0F5F1;--teal-mid:#1D9E75;--teal-dark:#085041;--teal-deep:#04342C;
+  --slate:#1C2B2A;--mist:#F2F8F7;--white:#FFFFFF;
+  --text-body:#2E3F3D;--text-muted:#5C706E;--text-faint:#8FA5A2;
+  --warn-bg:#FFFBEB;--warn-border:#FDE68A;--warn-text:#7C4A00;
+  --danger-bg:#FEF2F2;--danger-text:#7B1D1D;
+  --border:rgba(15,123,108,0.14);--border-strong:rgba(15,123,108,0.28);
+  --radius:12px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 2px 16px rgba(4,52,44,0.08);--shadow-md:0 6px 32px rgba(4,52,44,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--mist);color:var(--text-body);line-height:1.65;}
+/* ── TYPE ── */
+.serif{font-family:'DM Serif Display',Georgia,serif;}
+h1,h2,h3{color:var(--slate);}
+/* ── SKIP ── */
+.skip{position:absolute;top:-40px;left:0;background:var(--teal);color:#fff;padding:8px 16px;z-index:9999;border-radius:0 0 8px 0;font-size:14px;transition:top .2s;}
+.skip:focus{top:0;}
+/* ── DISCLAIMER ── */
+.disclaimer{background:#1e3a5f;color:#CBD5E1;padding:9px 24px;font-size:12.5px;text-align:center;line-height:1.5;}
+.disclaimer strong{color:#93C5FD;}
+.disclaimer a{color:#93C5FD;text-decoration:underline;}
+/* ── EMERGENCY BAR ── */
+.emergency-bar{background:#7B1D1D;color:#fff;text-align:center;padding:10px 20px;font-size:13.5px;font-weight:500;}
+.emergency-bar strong{font-weight:700;}
+.emergency-bar a{color:#FCA5A5;text-decoration:none;font-weight:700;}
+.emergency-bar a:hover{text-decoration:underline;}
+/* ── NAV ── */
+nav{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;padding:0 clamp(14px,4vw,48px);}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;height:58px;gap:18px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:33px;height:33px;background:var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:17px;height:17px;fill:none;stroke:white;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:18px;color:var(--slate);letter-spacing:-.01em;}
+.logo-text span{color:var(--teal);}
+.nav-badge{font-size:10px;font-weight:600;background:var(--teal-light);color:var(--teal-dark);padding:2px 7px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;}
+.live-dot{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:#059669;background:#ECFDF5;padding:2px 8px;border-radius:4px;}
+.live-pulse{width:6px;height:6px;border-radius:50%;background:#059669;animation:liveblink 1.5s infinite;}
+@keyframes liveblink{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-links{display:flex;gap:2px;margin-left:auto;}
+.nav-link{text-decoration:none;font-size:13px;color:var(--text-muted);padding:5px 10px;border-radius:var(--radius-sm);transition:all .15s;font-weight:500;}
+.nav-link:hover{background:var(--mist);color:var(--slate);}
+.nav-cta{background:var(--teal);color:white!important;padding:7px 15px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;text-decoration:none;transition:opacity .15s;}
+.nav-cta:hover{opacity:.88;}
+@media(max-width:760px){.nav-links .nav-link:not(:last-child){display:none;}.nav-badge,.live-dot{display:none;}}
+/* ── LOCATION BAR ── */
+.loc-bar{background:var(--teal-dark);padding:9px clamp(14px,4vw,48px);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+.loc-status{font-size:13px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:7px;}
+#loc-text{color:#9FE1CB;font-weight:600;}
+.loc-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:6px;color:white;font-size:12px;font-weight:500;padding:5px 11px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.loc-btn:hover{background:rgba(255,255,255,.2);}
+/* ── HERO ── */
+.hero{background:var(--teal-dark);color:white;padding:clamp(36px,6vw,80px) clamp(14px,4vw,48px);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(29,158,117,.22) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 400px;gap:44px;align-items:center;position:relative;z-index:1;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9FE1CB;margin-bottom:14px;}
+.hero-eyebrow::before{content:'';display:block;width:16px;height:1.5px;background:#5DCAA5;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,54px);color:white;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px;}
+.hero h1 em{font-style:italic;color:#5DCAA5;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.70);max-width:480px;line-height:1.65;margin-bottom:24px;}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-p{background:#1D9E75;color:white;padding:11px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;}
+.btn-p:hover{opacity:.88;}
+.btn-o{background:rgba(255,255,255,.08);color:white;padding:11px 20px;border-radius:var(--radius);font-size:14px;font-weight:500;text-decoration:none;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px;}
+.btn-o:hover{background:rgba(255,255,255,.15);}
+/* ── HERO CARD ── */
+.hero-card{background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-md);}
+.hc-label{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.hc-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.qn-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.qn-btn{background:var(--mist);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 9px;cursor:pointer;text-align:left;transition:all .15s;font-family:'Inter',sans-serif;}
+.qn-btn:hover{background:var(--teal-light);border-color:var(--teal-mid);}
+.qn-icon{font-size:17px;display:block;margin-bottom:2px;}
+.qn-label{font-size:12px;font-weight:600;color:var(--slate);display:block;}
+.qn-sub{font-size:10.5px;color:var(--text-muted);}
+.hc-or{text-align:center;font-size:11.5px;color:var(--text-faint);margin:9px 0;}
+.hc-search{display:flex;gap:6px;}
+.hc-search input{flex:1;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text-body);outline:none;transition:border .15s;background:white;}
+.hc-search input:focus{border-color:var(--teal);}
+.hc-search button{background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s;}
+.hc-search button:hover{opacity:.88;}
+@media(max-width:820px){.hero-inner{grid-template-columns:1fr;}.hero-card{display:none;}}
+/* ── TRUST ── */
+.trust{background:var(--white);border-bottom:1px solid var(--border);padding:10px clamp(14px,4vw,48px);}
+.trust-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;}
+.ti{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px;font-weight:500;}
+.td{width:5px;height:5px;border-radius:50%;background:var(--teal-mid);}
+/* ── SECTIONS ── */
+section{padding:clamp(36px,5vw,68px) clamp(14px,4vw,48px);}
+.si{max-width:1100px;margin:0 auto;}
+.sl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.st{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,36px);color:var(--slate);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;}
+.ss{font-size:15px;color:var(--text-muted);max-width:520px;line-height:1.6;margin-bottom:30px;}
+/* ── CHAT SECTION ── */
+#chat-section{background:var(--white);}
+.chat-layout{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start;}
+.chat-sidebar{}
+.cs-stat{background:var(--mist);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);}
+.cs-num{font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal-dark);}
+.cs-lbl{font-size:12.5px;color:var(--text-muted);margin-top:1px;}
+.cs-disclaimer{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:12px 14px;font-size:12.5px;color:var(--warn-text);line-height:1.55;margin-bottom:12px;}
+.cs-disclaimer strong{font-weight:600;color:#92400E;}
+.cs-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.cs-bullets li{font-size:13px;color:var(--text-muted);display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
+.cb-dot{width:5px;height:5px;border-radius:50%;background:var(--teal-mid);flex-shrink:0;margin-top:8px;}
+/* ── CHAT WINDOW ── */
+.chat-window{background:var(--mist);border-radius:var(--radius-lg);border:1px solid var(--border);display:flex;flex-direction:column;height:580px;overflow:hidden;}
+.cw-top{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.cw-avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cw-avatar svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.2;stroke-linecap:round;}
+.cw-name{font-size:13.5px;font-weight:600;color:var(--slate);}
+.cw-status{font-size:11px;color:var(--teal);display:flex;align-items:center;gap:4px;}
+.s-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:liveblink 2s infinite;}
+.cw-safeguard{background:var(--warn-bg);border-bottom:1px solid var(--warn-border);padding:6px 14px;font-size:11px;color:#92400E;line-height:1.4;}
+.cw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.cw-msgs::-webkit-scrollbar{width:3px;}
+.cw-msgs::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
+.msg{display:flex;gap:8px;}
+.msg.user{flex-direction:row-reverse;}
+.m-av{width:25px;height:25px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+.m-av.ai{background:var(--teal-light);color:var(--teal-dark);}
+.m-av.user{background:var(--slate);color:white;}
+.m-bub{max-width:80%;padding:9px 13px;border-radius:13px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;}
+.msg.ai .m-bub{background:var(--white);color:var(--text-body);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.msg.user .m-bub{background:var(--teal);color:white;border-bottom-right-radius:3px;}
+.typing{display:flex;align-items:center;gap:4px;padding:3px 0;}
+.td2{width:7px;height:7px;border-radius:50%;background:#9FE1CB;animation:td 1.2s infinite;}
+.td2:nth-child(2){animation-delay:.2s;}.td2:nth-child(3){animation-delay:.4s;}
+@keyframes td{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.cw-chips{padding:8px 12px;display:flex;gap:5px;flex-wrap:wrap;border-top:1px solid var(--border);background:var(--white);}
+.chip{background:none;border:1px solid var(--border-strong);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
+.chip:hover{background:var(--teal-light);border-color:var(--teal-mid);color:var(--teal-dark);}
+.cw-input{padding:10px 12px;border-top:1px solid var(--border);background:var(--white);display:flex;gap:8px;align-items:flex-end;}
+.cw-input textarea{flex:1;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:8px 11px;font-size:13.5px;font-family:'Inter',sans-serif;line-height:1.4;resize:none;min-height:36px;max-height:80px;color:var(--text-body);background:white;outline:none;transition:border .15s;}
+.cw-input textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,123,108,0.09);}
+.send-btn{width:36px;height:36px;background:var(--teal);border:none;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .15s;}
+.send-btn:hover{opacity:.88;}
+.send-btn svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.sig-note{background:var(--mist);border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;margin-top:14px;font-size:12px;color:var(--text-muted);display:flex;gap:8px;align-items:flex-start;line-height:1.55;}
+.sig-note svg{width:14px;height:14px;flex-shrink:0;stroke:var(--teal);fill:none;stroke-width:2;stroke-linecap:round;margin-top:1px;}
+@media(max-width:820px){.chat-layout{grid-template-columns:1fr;}.chat-sidebar{display:none;}.chat-window{height:480px;}}
+/* ── MAP SECTION ── */
+#map-section{background:var(--mist);}
+.map-layout{display:grid;grid-template-columns:320px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-height:560px;}
+.map-sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;height:560px;}
+.ms-top{padding:14px;border-bottom:1px solid var(--border);}
+.ms-label{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--teal);margin-bottom:7px;}
+.ms-search{display:flex;gap:6px;margin-bottom:9px;}
+.ms-search input{flex:1;border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:7px 10px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text-body);background:white;outline:none;transition:border .15s;}
+.ms-search input:focus{border-color:var(--teal);}
+.ms-search button{background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s;}
+.ms-search button:hover{opacity:.88;}
+.ms-loc-btn{width:100%;background:var(--teal-light);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:7px;font-size:12.5px;font-weight:500;color:var(--teal-dark);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:9px;}
+.ms-loc-btn:hover{background:#C1EBE0;}
+.ms-filters{display:flex;gap:4px;flex-wrap:wrap;}
+.mf-btn{background:none;border:1px solid var(--border-strong);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.mf-btn:hover,.mf-btn.active{background:var(--teal-light);border-color:var(--teal-mid);color:var(--teal-dark);}
+.ms-results{flex:1;overflow-y:auto;padding:8px;}
+.ms-results::-webkit-scrollbar{width:3px;}
+.ms-results::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
+.ms-empty{padding:20px 14px;text-align:center;color:var(--text-muted);font-size:13px;line-height:1.6;}
+.ms-empty strong{color:var(--slate);}
+/* ── RESULT CARD ── */
+.rc{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:11px;margin-bottom:7px;cursor:pointer;transition:all .15s;}
+.rc:hover,.rc.active{border-color:var(--teal-mid);background:var(--teal-light);}
+.rc-top{display:flex;align-items:flex-start;gap:7px;margin-bottom:4px;}
+.rc-icon{font-size:15px;flex-shrink:0;}
+.rc-name{font-size:12.5px;font-weight:600;color:var(--slate);line-height:1.3;flex:1;}
+.rc-badge{font-size:9.5px;font-weight:600;padding:1px 5px;border-radius:4px;flex-shrink:0;white-space:nowrap;}
+.rc-badge.shelter{background:var(--teal-light);color:var(--teal-dark);}
+.rc-badge.food{background:#FFF3CD;color:#7A5300;}
+.rc-badge.clothing{background:#F0EDFF;color:#3C2E99;}
+.rc-badge.advice{background:#EBF4FF;color:#0C447C;}
+.rc-badge.council{background:#FFF0F0;color:#7B1D1D;}
+.rc-badge.health{background:#ECFDF5;color:#065F46;}
+.rc-addr{font-size:11px;color:var(--text-muted);margin-bottom:7px;line-height:1.35;}
+.rc-dist{font-size:10.5px;color:var(--teal);font-weight:500;margin-bottom:7px;}
+.rc-actions{display:flex;gap:4px;flex-wrap:wrap;}
+.ra{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;padding:4px 8px;border-radius:5px;text-decoration:none;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
+.ra.call{background:var(--teal-light);color:var(--teal-dark);}
+.ra.call:hover{background:#C1EBE0;}
+.ra.gmaps{background:#E8F0FE;color:#1967D2;}
+.ra.gmaps:hover{background:#D2E3FC;}
+.ra.waze{background:#E6F7FF;color:#006BB4;}
+.ra.waze:hover{background:#CCF0FF;}
+.ra.connect{background:#1D9E75;color:white;}
+.ra.connect:hover{opacity:.88;}
+/* ── MAP CANVAS ── */
+#map-canvas{flex:1;position:relative;}
+#leaflet-map{width:100%;height:560px;}
+.map-init-overlay{position:absolute;inset:0;background:var(--teal-light);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:24px;text-align:center;}
+.mio-icon{font-size:44px;margin-bottom:12px;}
+.mio-title{font-size:15px;font-weight:600;color:var(--slate);margin-bottom:6px;}
+.mio-sub{font-size:13px;color:var(--text-muted);line-height:1.55;max-width:260px;margin-bottom:16px;}
+.mio-btn{background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s;}
+.mio-btn:hover{opacity:.88;}
+/* ── CONNECT PROMPT BANNER ── */
+.connect-prompt{background:var(--teal-light);border:1px solid var(--teal-mid);border-radius:var(--radius);padding:12px 16px;margin-top:14px;display:none;align-items:center;gap:12px;}
+.cp-text{font-size:13.5px;color:var(--teal-dark);flex:1;line-height:1.45;}
+.cp-text strong{font-weight:600;}
+.cp-btn{background:var(--teal);color:white;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:opacity .15s;}
+.cp-btn:hover{opacity:.88;}
+/* ── CONNECT MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.48);align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-card{background:white;border-radius:var(--radius-lg);padding:24px;max-width:420px;width:100%;box-shadow:var(--shadow-md);max-height:90vh;overflow-y:auto;}
+.mc-title{font-size:16px;font-weight:600;color:var(--slate);margin-bottom:5px;}
+.mc-sub{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;}
+.mc-org{font-size:14.5px;font-weight:600;color:var(--teal-dark);margin-bottom:3px;}
+.mc-phone{font-size:13.5px;color:var(--teal);margin-bottom:14px;}
+.mc-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+.mc-opt{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-decoration:none;font-family:'Inter',sans-serif;background:none;width:100%;text-align:left;}
+.mc-opt:hover{border-color:var(--teal-mid);background:var(--teal-light);}
+.mc-opt-icon{font-size:20px;flex-shrink:0;}
+.mc-opt-label{font-size:13px;font-weight:600;color:var(--slate);}
+.mc-opt-sub{font-size:11.5px;color:var(--text-muted);}
+.mc-close{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);width:100%;padding:9px;font-size:13px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.mc-close:hover{background:var(--mist);}
+/* ── SUPPORT CARDS ── */
+#support-section{background:var(--white);}
+.verify-warn{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:12px 15px;margin-bottom:22px;font-size:12.5px;color:var(--warn-text);line-height:1.55;display:flex;gap:8px;align-items:flex-start;}
+.vw-icon{font-size:15px;flex-shrink:0;}
+.support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+.sc{background:var(--mist);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .2s;}
+.sc:hover{border-color:var(--teal-mid);box-shadow:var(--shadow);transform:translateY(-2px);}
+.sc-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px;}
+.sc-icon.t{background:var(--teal-light);}
+.sc-icon.a{background:#FFF3CD;}
+.sc-icon.p{background:#F0EDFF;}
+.sc-icon.b{background:#EBF4FF;}
+.sc-icon.r{background:#FFF0F0;}
+.sc-name{font-size:13.5px;font-weight:600;color:var(--slate);margin-bottom:4px;}
+.sc-desc{font-size:12.5px;color:var(--text-muted);line-height:1.55;margin-bottom:10px;}
+.sc-phone{font-size:12.5px;font-weight:600;color:var(--teal);display:flex;align-items:center;gap:5px;text-decoration:none;}
+.sc-phone:hover{text-decoration:underline;}
+.sc-verify{font-size:10.5px;color:var(--text-faint);margin-top:6px;font-style:italic;}
+.sc-bdg{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;margin-bottom:6px;}
+.sc-bdg.free{background:var(--teal-light);color:var(--teal-dark);}
+.sc-bdg.t247{background:#FFF3CD;color:#7A5300;}
+.sc-bdg.scot{background:#F0EDFF;color:#3C2E99;}
+/* ── TONIGHT ── */
+#tonight-section{background:var(--teal-dark);}
+#tonight-section .sl{color:#9FE1CB;}
+#tonight-section .st{color:white;}
+#tonight-section .ss{color:rgba(255,255,255,.62);max-width:100%;}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px;}
+.step-c{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:var(--radius-lg);padding:20px;}
+.step-n{font-family:'DM Serif Display',serif;font-size:40px;color:rgba(93,202,165,.25);line-height:1;margin-bottom:6px;}
+.step-t{font-size:14px;font-weight:600;color:white;margin-bottom:6px;}
+.step-b{font-size:12.5px;color:rgba(255,255,255,.60);line-height:1.6;}
+.step-cav{font-size:11px;color:rgba(255,255,255,.36);margin-top:8px;font-style:italic;}
+.step-a{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#5DCAA5;text-decoration:none;}
+.step-a:hover{color:#9FE1CB;}
+/* ── RIGHTS ── */
+#rights-section{background:var(--white);}
+.rights-caveat{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:13px 16px;margin-bottom:26px;font-size:12.5px;color:var(--warn-text);line-height:1.6;}
+.rights-caveat strong{font-weight:600;color:#92400E;}
+.rights-layout{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.ri{padding:14px 0;border-bottom:1px solid var(--border);}
+.ri:last-child{border-bottom:none;}
+.ri-t{font-size:13.5px;font-weight:600;color:var(--slate);margin-bottom:4px;}
+.ri-b{font-size:13px;color:var(--text-muted);line-height:1.6;}
+.rights-hl{background:var(--teal-dark);border-radius:var(--radius-lg);padding:24px;color:white;position:sticky;top:80px;}
+.rh-eye{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#9FE1CB;margin-bottom:12px;}
+.rh-q{font-family:'DM Serif Display',serif;font-size:17px;line-height:1.45;color:white;margin-bottom:12px;font-style:italic;}
+.rh-b{font-size:13px;color:rgba(255,255,255,.66);line-height:1.6;margin-bottom:12px;}
+.rh-law{font-size:11px;color:#5DCAA5;font-weight:500;margin-bottom:12px;}
+.rh-cav{font-size:11px;color:rgba(255,255,255,.40);font-style:italic;line-height:1.5;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;}
+@media(max-width:720px){.rights-layout{grid-template-columns:1fr;}.rights-hl{position:static;}}
+/* ── ROADMAP ── */
+#roadmap-section{background:var(--mist);}
+.roadmap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
+.ph-c{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden;}
+.ph-c.live{border-color:var(--teal-mid);border-width:2px;}
+.ph-c.live::before{content:'Live';position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--teal-light);color:var(--teal-dark);padding:2px 6px;border-radius:4px;}
+.ph-n{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-bottom:6px;}
+.ph-t{font-size:14px;font-weight:600;color:var(--slate);margin-bottom:6px;}
+.ph-tags{display:flex;flex-direction:column;gap:3px;}
+.ph-tag{font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;gap:5px;}
+.ph-tag::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--teal-mid);flex-shrink:0;}
+/* ── FOOTER ── */
+footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28px,4vw,48px) clamp(14px,4vw,48px) 24px;}
+.fi{max-width:1100px;margin:0 auto;}
+.f-emerg{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:var(--radius);padding:12px 16px;margin-bottom:24px;font-size:13px;color:rgba(255,255,255,.76);}
+.f-emerg strong{color:white;}
+.f-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:28px;}
+.f-brand-wm{font-family:'DM Serif Display',serif;font-size:18px;color:white;margin-bottom:8px;}
+.f-brand-wm span{color:#5DCAA5;}
+.f-brand p{font-size:12.5px;line-height:1.6;max-width:250px;}
+.f-col-t{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.30);margin-bottom:10px;}
+.f-links{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.f-links li a{font-size:13px;color:rgba(255,255,255,.52);text-decoration:none;transition:color .15s;}
+.f-links li a:hover{color:white;}
+.f-bottom{border-top:1px solid rgba(255,255,255,.09);padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.f-bottom p{font-size:11px;color:rgba(255,255,255,.30);}
+@media(max-width:600px){.f-top{grid-template-columns:1fr;gap:18px;}.steps-grid{grid-template-columns:1fr;}.support-grid{grid-template-columns:1fr;}.hero-actions{flex-direction:column;}.roadmap-grid{grid-template-columns:1fr 1fr;}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+/* ── LEAFLET OVERRIDES ── */
+.leaflet-popup-content-wrapper{border-radius:10px!important;box-shadow:0 4px 20px rgba(0,0,0,0.15)!important;border:1px solid var(--border)!important;}
+.leaflet-popup-tip{display:none;}
+.l-popup{font-family:'Inter',sans-serif;font-size:13px;min-width:220px;}
+.l-popup-name{font-weight:600;color:var(--slate);font-size:13.5px;margin-bottom:4px;}
+.l-popup-addr{color:var(--text-muted);font-size:12px;margin-bottom:8px;line-height:1.4;}
+.l-popup-actions{display:flex;gap:5px;flex-wrap:wrap;}
+.l-popup-btn{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:5px 9px;border-radius:5px;text-decoration:none;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .15s;}
+.l-popup-btn.call{background:var(--teal-light);color:var(--teal-dark);}
+.l-popup-btn.gmaps{background:#E8F0FE;color:#1967D2;}
+.l-popup-btn.waze{background:#E6F7FF;color:#006BB4;}
+.l-popup-btn.connect-b{background:#1D9E75;color:white;}
+</style>
+</head>
+<body>
+<a href="#chat-section" class="skip">Skip to AI chat</a>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer" role="note">
+  <strong>Important:</strong> refugeSeek signposts you to support — it does not replace legal advice. All legal information is general guidance only. Verify with <a href="https://scotland.shelter.org.uk" target="_blank" rel="noopener">Shelter Scotland</a> or a qualified housing solicitor before acting.
+</div>
+
+<!-- EMERGENCY BAR -->
+<div class="emergency-bar" role="alert" aria-live="assertive">
+  <strong>In immediate danger? Call 999</strong> &nbsp;·&nbsp; Homeless tonight in Scotland? <a href="tel:08088004444">Shelter Scotland: 0808 800 4444</a> — free, 24/7
+</div>
+
+<!-- NAV -->
+<nav aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="refugeSeek Scotland">
+      <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="logo-text">refuge<span>Seek</span></span>
+    </a>
+    <span class="nav-badge">Scotland</span>
+    <span class="live-dot"><span class="live-pulse"></span>Live Demo</span>
+    <div class="nav-links">
+      <a href="#chat-section" class="nav-link">AI Guide</a>
+      <a href="#map-section" class="nav-link">Map</a>
+      <a href="#support-section" class="nav-link">Support</a>
+      <a href="#tonight-section" class="nav-link">Tonight</a>
+      <a href="#rights-section" class="nav-link">Rights</a>
+      <a href="#chat-section" class="nav-cta">Get help now</a>
+    </div>
+  </div>
+</nav>
+
+<!-- LOCATION BAR -->
+<div class="loc-bar" id="loc-bar" role="status" aria-live="polite">
+  <div class="loc-status">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.5-8 13-8 13S4 15.5 4 10a8 8 0 018-8z"/></svg>
+    <span id="loc-text">Location not set — allow access or enter postcode below</span>
+  </div>
+  <button class="loc-btn" onclick="requestGeoLocation()">📍 Use my location</button>
+  <button class="loc-btn" onclick="promptManualLocation()">✏️ Enter postcode</button>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Scotland's free crisis signposting platform</div>
+      <h1 class="serif">You deserve<br><em>shelter tonight.</em><br>Let's find it.</h1>
+      <p class="hero-sub">refugeSeek connects people facing homelessness in Scotland to emergency shelter, food, clothing, legal guidance, and local support — through a live AI companion and real-time map. Free, confidential, 24/7.</p>
+      <div class="hero-actions">
+        <a href="#chat-section" class="btn-p">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Talk to our AI guide
+        </a>
+        <a href="#map-section" class="btn-o">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.5-8 13-8 13S4 15.5 4 10a8 8 0 018-8z"/></svg>
+          Find help on the map
+        </a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-label">What do you need right now?</div>
+      <div class="qn-grid">
+        <button class="qn-btn" onclick="heroChat('I need somewhere to sleep tonight in Scotland')"><span class="qn-icon">🏠</span><span class="qn-label">Shelter</span><span class="qn-sub">Emergency beds</span></button>
+        <button class="qn-btn" onclick="heroChat('Where can I get free food near me in Scotland?')"><span class="qn-icon">🍲</span><span class="qn-label">Free food</span><span class="qn-sub">Hot meals today</span></button>
+        <button class="qn-btn" onclick="heroChat('I need warm clothes in Scotland')"><span class="qn-icon">🧥</span><span class="qn-label">Clothing</span><span class="qn-sub">Free essentials</span></button>
+        <button class="qn-btn" onclick="heroChat('What are my general housing rights if I am homeless in Scotland?')"><span class="qn-icon">⚖️</span><span class="qn-label">Rights</span><span class="qn-sub">General guidance</span></button>
+      </div>
+      <div class="hc-or">or search by location</div>
+      <div class="hc-search">
+        <input type="text" id="hero-loc-input" placeholder="Glasgow, EH1, Dundee…" aria-label="Your location in Scotland">
+        <button onclick="heroLocationSearch()">Find help</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TRUST STRIP -->
+<div class="trust">
+  <div class="trust-inner">
+    <span class="ti"><span class="td"></span>Free for everyone</span>
+    <span class="ti"><span class="td"></span>No account needed</span>
+    <span class="ti"><span class="td"></span>Scotland-specific law</span>
+    <span class="ti"><span class="td"></span>Live AI signposting</span>
+    <span class="ti"><span class="td"></span>Real-time map</span>
+    <span class="ti"><span class="td"></span>Google Maps + Waze</span>
+    <span class="ti"><span class="td"></span>Available 24/7</span>
+  </div>
+</div>
+
+<!-- CONNECT MODAL -->
+<div class="modal-overlay" id="connect-modal" role="dialog" aria-modal="true" aria-label="Connect to a nearby service">
+  <div class="modal-card">
+    <div class="mc-title">Would you like help connecting?</div>
+    <div class="mc-sub">I can help you reach this service right now. What would be most useful?</div>
+    <div class="mc-org" id="modal-org-name"></div>
+    <div class="mc-phone" id="modal-org-phone"></div>
+    <div class="mc-opts">
+      <a id="modal-call-btn" href="#" class="mc-opt">
+        <span class="mc-opt-icon">📞</span>
+        <div><div class="mc-opt-label">Call them now</div><div class="mc-opt-sub">Free call — opens your phone dialler</div></div>
+      </a>
+      <a id="modal-gmaps-btn" href="#" target="_blank" rel="noopener" class="mc-opt">
+        <span class="mc-opt-icon">🗺️</span>
+        <div><div class="mc-opt-label">Get directions — Google Maps</div><div class="mc-opt-sub">Walking, transit, or driving route</div></div>
+      </a>
+      <a id="modal-waze-btn" href="#" target="_blank" rel="noopener" class="mc-opt">
+        <span class="mc-opt-icon">🚗</span>
+        <div><div class="mc-opt-label">Navigate by car — Waze</div><div class="mc-opt-sub">Live traffic-aware driving route</div></div>
+      </a>
+      <button class="mc-opt" id="modal-ai-btn">
+        <span class="mc-opt-icon">💬</span>
+        <div><div class="mc-opt-label">Ask our AI about this service</div><div class="mc-opt-sub">What to expect and what to say when you arrive</div></div>
+      </button>
+    </div>
+    <button class="mc-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<!-- AI CHAT SECTION -->
+<section id="chat-section">
+  <div class="si">
+    <div class="chat-layout">
+      <div class="chat-sidebar">
+        <div class="sl">Live AI signposting</div>
+        <h2 class="st" style="font-size:26px;margin-bottom:10px">Talk to Refuge</h2>
+        <p style="font-size:13.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Refuge listens, understands your situation, and points you toward the right Scottish organisations. A knowledgeable first step — not a replacement for Shelter Scotland or a housing solicitor.</p>
+        <div class="cs-disclaimer">
+          <strong>What Refuge does:</strong> signpost to services, explain general rights, help you prepare for council conversations.<br><br>
+          <strong>What Refuge won't do:</strong> confirm live shelter availability or give definitive legal advice. Always call to verify.
+        </div>
+        <div class="cs-stat">
+          <div class="cs-num">Free</div>
+          <div class="cs-lbl">No sign-up. No data stored. Confidential.</div>
+        </div>
+        <ul class="cs-bullets">
+          <li><span class="cb-dot"></span>Scotland's housing rights framework — general guidance</li>
+          <li><span class="cb-dot"></span>Signposting to charities, food banks, shelters</li>
+          <li><span class="cb-dot"></span>Preparing for council homelessness applications</li>
+          <li><span class="cb-dot"></span>Auto-updates the map when you mention a location</li>
+        </ul>
+      </div>
+      <div>
+        <div class="chat-window">
+          <div class="cw-top">
+            <div class="cw-avatar"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+            <div>
+              <div class="cw-name">Refuge — refugeSeek AI Guide</div>
+              <div class="cw-status"><span class="s-dot"></span> Online · Scotland signposting · Live</div>
+            </div>
+          </div>
+          <div class="cw-safeguard"><strong>Signposting only:</strong> Refuge cannot confirm live bed availability. Always call a service directly before travelling.</div>
+          <div class="cw-msgs" id="chat-msgs" role="log" aria-live="polite"></div>
+          <div class="cw-chips">
+            <button class="chip" onclick="chip('I am about to be homeless tonight in Scotland — what should I do first?')">Homeless tonight</button>
+            <button class="chip" onclick="chip('Where are food banks near me in Scotland?')">Food banks</button>
+            <button class="chip" onclick="chip('I am fleeing domestic abuse — what Scottish services can help?')">Fleeing abuse</button>
+            <button class="chip" onclick="chip('I have children with me — how does that affect my options?')">I have children</button>
+            <button class="chip" onclick="chip('How do I apply as homeless to a Scottish council?')">Council application</button>
+            <button class="chip" onclick="chip('I need warm clothes — where free in Scotland?')">Free clothing</button>
+          </div>
+          <div class="cw-input">
+            <textarea id="chat-input" placeholder="Ask anything about support in Scotland…" rows="1" aria-label="Type your message" onkeydown="handleKey(event)"></textarea>
+            <button class="send-btn" onclick="sendMessage()" aria-label="Send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+        <div class="sig-note">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Legal content based on publicly available Scottish Government and Shelter Scotland guidance — not yet verified by a qualified Scottish housing solicitor. Solicitor review planned before public launch.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section id="map-section">
+  <div class="si">
+    <div class="sl">Live interactive map</div>
+    <h2 class="st">Find support near you — mapped across Scotland</h2>
+    <p class="ss">Enter your town or postcode to see nearby shelters, food banks, councils and services on a live map. Tap any pin or result to get directions or connect directly.</p>
+    <div class="map-layout">
+      <div class="map-sidebar">
+        <div class="ms-top">
+          <div class="ms-label">Search your area</div>
+          <div class="ms-search">
+            <input type="text" id="map-search-input" placeholder="Glasgow, EH1, Dundee…" aria-label="Location search" onkeydown="if(event.key==='Enter')mapSearch()">
+            <button onclick="mapSearch()">Go</button>
+          </div>
+          <button class="ms-loc-btn" onclick="requestGeoLocation()">📍 Use my current location</button>
+          <div class="ms-filters" role="group" aria-label="Filter by type">
+            <button class="mf-btn active" data-f="all" onclick="setFilter('all',this)">All</button>
+            <button class="mf-btn" data-f="shelter" onclick="setFilter('shelter',this)">🏠 Shelter</button>
+            <button class="mf-btn" data-f="food" onclick="setFilter('food',this)">🍲 Food</button>
+            <button class="mf-btn" data-f="clothing" onclick="setFilter('clothing',this)">🧥 Clothing</button>
+            <button class="mf-btn" data-f="advice" onclick="setFilter('advice',this)">⚖️ Advice</button>
+            <button class="mf-btn" data-f="council" onclick="setFilter('council',this)">🏛️ Council</button>
+          </div>
+        </div>
+        <div class="ms-results" id="map-results"></div>
+      </div>
+      <div id="map-canvas" style="position:relative;flex:1;">
+        <div class="map-init-overlay" id="map-overlay">
+          <div class="mio-icon">📍</div>
+          <div class="mio-title">Interactive map of Scotland</div>
+          <div class="mio-sub">Enter your town or postcode to see shelters, food banks, councils and support services near you with live directions.</div>
+          <button class="mio-btn" onclick="document.getElementById('map-search-input').focus();document.getElementById('map-section').scrollIntoView()">Search your area</button>
+        </div>
+        <div id="leaflet-map"></div>
+      </div>
+    </div>
+    <div class="connect-prompt" id="connect-prompt">
+      <span class="cp-text"><strong>Would you like help connecting?</strong> Our AI can tell you what to say when you arrive, or tap Connect on any result to call or get directions.</span>
+      <button class="cp-btn" onclick="connectNearest()">Connect me →</button>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT CARDS -->
+<section id="support-section">
+  <div class="si">
+    <div class="sl">Scotland-wide organisations</div>
+    <h2 class="st">Verified services that can help</h2>
+    <p class="ss">All services listed are free. Phone numbers were accurate at time of writing — verify directly before travelling.</p>
+    <div class="verify-warn">
+      <span class="vw-icon">⚠️</span>
+      <span><strong>Always call ahead.</strong> Shelters, food banks, and clothing services change hours and availability. refugeSeek cannot confirm real-time availability. Call directly before travelling, especially in the evening.</span>
+    </div>
+    <div class="support-grid">
+      <div class="sc"><div class="sc-icon t">🏠</div><span class="sc-bdg scot">Scotland priority</span><div class="sc-name">Shelter Scotland</div><div class="sc-desc">Emergency housing advice, council application support, and guidance on rights under Scottish housing legislation. Free helpline staffed by trained advisors.</div><a href="tel:08088004444" class="sc-phone">📞 0808 800 4444</a><div class="sc-verify">Free · 24/7 · Verify at scotland.shelter.org.uk</div></div>
+      <div class="sc"><div class="sc-icon t">🌙</div><span class="sc-bdg free">Outreach</span><div class="sc-name">Simon Community Scotland</div><div class="sc-desc">Outreach teams, night shelters, and supported housing across Scotland. Outreach workers may come to you in some areas. Call first to check local availability.</div><a href="tel:08000272466" class="sc-phone">📞 0800 027 7466</a><div class="sc-verify">Free · Call to confirm availability in your area</div></div>
+      <div class="sc"><div class="sc-icon a">🍲</div><span class="sc-bdg free">Free food</span><div class="sc-name">Trussell Trust Food Banks</div><div class="sc-desc">Emergency food parcels across Scotland. A referral is usually needed from a GP, social worker, or Citizens Advice. Some locations accept self-referrals.</div><a href="https://www.trusselltrust.org/get-help/find-a-foodbank/" target="_blank" rel="noopener" class="sc-phone">🌐 Find your nearest bank</a><div class="sc-verify">Call ahead to confirm referral requirements and hours</div></div>
+      <div class="sc"><div class="sc-icon a">☕</div><span class="sc-bdg free">Community</span><div class="sc-name">Local Soup Kitchens</div><div class="sc-desc">Many churches, mosques, Salvation Army centres and community orgs serve free hot meals in the evenings. No ID usually required. Ask Refuge or check the map.</div><a href="#chat-section" class="sc-phone">💬 Ask the AI for your area</a><div class="sc-verify">Verify before travelling — hours vary widely</div></div>
+      <div class="sc"><div class="sc-icon p">🧥</div><span class="sc-bdg free">Free clothing</span><div class="sc-name">Salvation Army Scotland</div><div class="sc-desc">Warm clothing, sleeping bags, hygiene packs, and emergency essentials at local centres. Also offers food and shelter referrals. Call ahead to confirm availability.</div><a href="https://www.salvationarmy.org.uk/find-us" target="_blank" rel="noopener" class="sc-phone">🌐 Find your local centre</a><div class="sc-verify">Call to confirm opening hours and stock</div></div>
+      <div class="sc"><div class="sc-icon b">⚖️</div><span class="sc-bdg free">Free advice</span><div class="sc-name">Citizens Advice Scotland</div><div class="sc-desc">Free, confidential guidance on housing rights, benefits, debt, and eviction under Scots law. Walk into any CAB office or call their national line.</div><a href="tel:08000281456" class="sc-phone">📞 0800 028 1456</a><div class="sc-verify">Free · Check cas.org.uk for local hours</div></div>
+      <div class="sc"><div class="sc-icon b">🏥</div><span class="sc-bdg free">Healthcare</span><div class="sc-name">NHS Scotland</div><div class="sc-desc">NHS Scotland guidance indicates GP practices should not refuse registration solely on the basis of no fixed address. Major Scottish cities have dedicated homeless health teams.</div><a href="tel:111" class="sc-phone">📞 NHS 24: 111</a><div class="sc-verify">Free · 24/7 · nhs24.scot</div></div>
+      <div class="sc"><div class="sc-icon r">💜</div><span class="sc-bdg t247">24/7</span><div class="sc-name">Domestic Abuse — Scotland</div><div class="sc-desc">Scottish Women's Aid and Refuge Scotland operate safe houses across Scotland. The helpline connects you to local services and can arrange emergency accommodation.</div><a href="tel:08000271234" class="sc-phone">📞 0800 027 1234</a><div class="sc-verify">Free · 24/7 · scottishwomensaid.org.uk</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TONIGHT -->
+<section id="tonight-section">
+  <div class="si">
+    <div class="sl">Crisis action guide</div>
+    <h2 class="st">What to do if you need a bed tonight</h2>
+    <p class="ss">General guidance based on publicly available information. Always contact services directly — availability varies and cannot be guaranteed in advance.</p>
+    <div class="steps-grid">
+      <div class="step-c"><div class="step-n">1</div><div class="step-t">Call Shelter Scotland first</div><div class="step-b">0808 800 4444 — freephone, 24 hours. Trained advisors can help identify emergency accommodation options and explain how to approach your council. Always the most effective first step.</div><a href="tel:08088004444" class="step-a">Call free →</a></div>
+      <div class="step-c"><div class="step-n">2</div><div class="step-t">Approach your local council</div><div class="step-b">Scottish councils operate under a legal duty framework which means most people presenting as homeless may be offered temporary accommodation while their case is assessed. Ask to make a formal homelessness application.</div><div class="step-cav">Specific entitlements depend on individual circumstances — Shelter Scotland can advise.</div></div>
+      <div class="step-c"><div class="step-n">3</div><div class="step-t">Contact Simon Community</div><div class="step-b">Call 0800 027 7466. In some Scottish cities, outreach workers may come to you. They can also help connect you to night shelters — call first to confirm availability tonight.</div><a href="tel:08000272466" class="step-a">Call free →</a></div>
+      <div class="step-c"><div class="step-n">4</div><div class="step-t">Find food and warmth while you wait</div><div class="step-b">Many Salvation Army centres, churches, and community orgs offer free hot meals in the evenings. Ask Refuge AI or check the map for options near your area — then call ahead to confirm they are open.</div><a href="#map-section" class="step-a">Open the map →</a></div>
+      <div class="step-c"><div class="step-n">5</div><div class="step-t">Ask for written confirmation</div><div class="step-b">When speaking to council housing staff, ask for written confirmation that your homelessness application has been registered. This creates a formal record and helps Shelter Scotland support you if any issues arise.</div></div>
+      <div class="step-c"><div class="step-n">6</div><div class="step-t">Children or domestic abuse — say so immediately</div><div class="step-b">If you have children or are fleeing domestic abuse, communicate this to every service from the outset. These circumstances affect your options under Scottish housing law. Domestic abuse helpline: 0800 027 1234.</div><a href="tel:08000271234" class="step-a">Call helpline →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- RIGHTS -->
+<section id="rights-section">
+  <div class="si">
+    <div class="sl">Know your rights</div>
+    <h2 class="st">Scotland's housing framework — general guidance</h2>
+    <div class="rights-caveat"><strong>Important:</strong> The content below is general guidance based on publicly available Scottish Government and Shelter Scotland material. It is not legal advice. Please speak to <strong>Shelter Scotland (0808 800 4444)</strong> or a qualified Scottish housing solicitor before acting. This content has not been verified by a solicitor.</div>
+    <div class="rights-layout">
+      <div>
+        <div class="ri"><div class="ri-t">Councils have a duty to assess your situation</div><div class="ri-b">When you present as homeless to a Scottish council, they are generally required to carry out a homelessness assessment. During this process, many people may be entitled to temporary accommodation depending on their circumstances.</div></div>
+        <div class="ri"><div class="ri-t">Families with children may have additional protections</div><div class="ri-b">Scottish housing legislation includes provisions that may give families with dependent children additional protections. Communicate this immediately when speaking to any council housing team.</div></div>
+        <div class="ri"><div class="ri-t">You may have the right to appeal a decision</div><div class="ri-b">If a council makes a decision about your application that you believe is incorrect, you may be able to request a review. Time limits apply. Shelter Scotland and Citizens Advice can help you explore this.</div></div>
+        <div class="ri"><div class="ri-t">NHS care should generally be accessible without a fixed address</div><div class="ri-b">NHS Scotland guidance indicates that GP practices should not refuse registration solely because a patient has no fixed address. If you encounter difficulty, contact NHS 24 on 111.</div></div>
+        <div class="ri"><div class="ri-t">Benefits may be available while homeless</div><div class="ri-b">Universal Credit and other benefits can in many cases be claimed without a permanent address. Citizens Advice Scotland can help you understand what you may be entitled to and help with the application.</div></div>
+        <div class="ri"><div class="ri-t">Local connection is generally not required</div><div class="ri-b">In many cases under Scottish housing law, you do not need a prior connection to an area to make a homelessness application there. Shelter Scotland can advise on how this applies to your situation.</div></div>
+      </div>
+      <div>
+        <div class="rights-hl">
+          <div class="rh-eye">Scotland's legal framework — overview</div>
+          <div class="rh-q">"Scotland has some of the most protective homelessness legislation in Europe — but rights are only useful when someone helps you navigate them."</div>
+          <div class="rh-b">Scotland abolished the concept of "priority need" in 2012 under the Housing (Scotland) Act 2010. This means the scope of who Scottish councils must assist is broader than in England and Wales. However, individual eligibility depends on circumstances, and the law can be complex in practice.</div>
+          <div class="rh-law">Housing (Scotland) Act 1987 · Homelessness etc. (Scotland) Act 2003 · Housing (Scotland) Act 2010</div>
+          <div class="rh-cav">General overview only. Not verified by a qualified Scottish housing solicitor. Please speak to Shelter Scotland (0808 800 4444) for advice specific to your circumstances.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap-section">
+  <div class="si">
+    <div class="sl">Platform roadmap</div>
+    <h2 class="st">Scotland's AI social support navigator</h2>
+    <p class="ss">Phase 1 is live as a prototype. Expansion depends on service verification, solicitor review, funding, and partnerships with Scottish councils and NHS Scotland.</p>
+    <div class="roadmap-grid">
+      <div class="ph-c live"><div class="ph-n">Phase 1</div><div class="ph-t">Homelessness</div><div class="ph-tags"><div class="ph-tag">Emergency shelter signposting</div><div class="ph-tag">Food &amp; clothing access</div><div class="ph-tag">AI conversational guide</div><div class="ph-tag">Live interactive map</div><div class="ph-tag">Google Maps + Waze</div></div></div>
+      <div class="ph-c"><div class="ph-n" style="color:#B45309">Phase 2</div><div class="ph-t">Domestic Abuse</div><div class="ph-tags"><div class="ph-tag">Safe house locator</div><div class="ph-tag">Scottish Women's Aid</div><div class="ph-tag">Children's services</div><div class="ph-tag">Legal rights signposting</div></div></div>
+      <div class="ph-c"><div class="ph-n">Phase 3</div><div class="ph-t">Refugees &amp; Asylum</div><div class="ph-tags"><div class="ph-tag">NASS navigation</div><div class="ph-tag">Scottish Refugee Council</div><div class="ph-tag">Legal aid signposting</div><div class="ph-tag">Interpreter access</div></div></div>
+      <div class="ph-c"><div class="ph-n">Phase 4</div><div class="ph-t">Food Insecurity</div><div class="ph-tags"><div class="ph-tag">Real-time food bank map</div><div class="ph-tag">Community pantry network</div><div class="ph-tag">Crisis fund signposting</div></div></div>
+      <div class="ph-c"><div class="ph-n">Phase 5</div><div class="ph-t">Mental Health Crisis</div><div class="ph-tags"><div class="ph-tag">Crisis line signposting</div><div class="ph-tag">CAMHS navigation</div><div class="ph-tag">NHS 24 integration</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fi">
+    <div class="f-emerg"><strong>Key numbers always available:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
+    <div class="f-top">
+      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Live Demo</span></div><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content under solicitor review before public launch.</p></div>
+      <div><div class="f-col-t">Get help</div><ul class="f-links"><li><a href="#chat-section">Talk to Refuge AI</a></li><li><a href="#map-section">Find on map</a></li><li><a href="#support-section">Support near me</a></li><li><a href="#tonight-section">Help tonight</a></li><li><a href="#rights-section">Know my rights</a></li></ul></div>
+      <div><div class="f-col-t">Key charities</div><ul class="f-links"><li><a href="https://scotland.shelter.org.uk" target="_blank" rel="noopener">Shelter Scotland</a></li><li><a href="https://www.simonscotland.org" target="_blank" rel="noopener">Simon Community</a></li><li><a href="https://www.cas.org.uk" target="_blank" rel="noopener">Citizens Advice Scotland</a></li><li><a href="https://www.trusselltrust.org" target="_blank" rel="noopener">Trussell Trust</a></li><li><a href="https://www.scottishwomensaid.org.uk" target="_blank" rel="noopener">Scottish Women's Aid</a></li></ul></div>
+    </div>
+    <div class="f-bottom"><p>© 2026 refugeSeek Scotland · Prototype · Legal content under solicitor review</p><p>AI guidance does not replace legal or medical advice</p></div>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   refugeSeek Scotland — Live Demo JavaScript
+   Full Leaflet map + AI chat + Connect modal + Directions
+═══════════════════════════════════════════════════════════ */
+
+/* ── SERVICES DATABASE ── */
+const SERVICES = [
+  // GLASGOW
+  {id:1,  name:"Simon Community Scotland HQ",      type:"shelter",  city:"Glasgow",    lat:55.8617, lng:-4.2583, addr:"94 Elmbank Street, Glasgow G2 4DL",                       phone:"0800 027 7466"},
+  {id:2,  name:"Glasgow City Mission",              type:"shelter",  city:"Glasgow",    lat:55.8600, lng:-4.2520, addr:"20 Crimea Street, Glasgow G2 8PW",                        phone:"0141 553 2777"},
+  {id:3,  name:"Glasgow City Council — Housing",    type:"council",  city:"Glasgow",    lat:55.8609, lng:-4.2509, addr:"City Chambers, George Square, Glasgow G2 1DU",            phone:"0800 838 502"},
+  {id:4,  name:"Trussell Trust — Drumchapel",       type:"food",     city:"Glasgow",    lat:55.9037, lng:-4.3597, addr:"Drumchapel, Glasgow G15",                                 phone:"0141 944 5740"},
+  {id:5,  name:"Salvation Army — Glasgow",          type:"clothing", city:"Glasgow",    lat:55.8654, lng:-4.2576, addr:"109 Trongate, Glasgow G1 5HD",                            phone:"0141 552 4148"},
+  {id:6,  name:"Citizens Advice Glasgow",           type:"advice",   city:"Glasgow",    lat:55.8619, lng:-4.2514, addr:"Saltmarket, Glasgow G1 5LD",                              phone:"0141 552 5556"},
+  {id:7,  name:"NHS GGC — Homeless Health Team",   type:"health",   city:"Glasgow",    lat:55.8495, lng:-4.2618, addr:"79 St Ninian Terrace, Glasgow G5 0RH",                    phone:"0141 201 4477"},
+  {id:8,  name:"Shelter Scotland — Glasgow",        type:"advice",   city:"Glasgow",    lat:55.8611, lng:-4.2534, addr:"55 Renfrew Street, Glasgow G2 3BD",                       phone:"0808 800 4444"},
+  {id:9,  name:"Trussell Trust — Govan",            type:"food",     city:"Glasgow",    lat:55.8586, lng:-4.3102, addr:"Harmony Row, Govan, Glasgow G51 3BA",                     phone:"0141 445 0285"},
+  {id:10, name:"Lodging House Mission",             type:"shelter",  city:"Glasgow",    lat:55.8575, lng:-4.2438, addr:"35 East Campbell Street, Glasgow G1 5DT",                 phone:"0141 552 0285"},
+  // EDINBURGH
+  {id:11, name:"Bethany Christian Trust",           type:"shelter",  city:"Edinburgh",  lat:55.9472, lng:-3.2019, addr:"65 Bonnington Road, Edinburgh EH6 5JQ",                  phone:"0131 561 8930"},
+  {id:12, name:"Cyrenians",                         type:"shelter",  city:"Edinburgh",  lat:55.9508, lng:-3.1851, addr:"Norton Park, 57 Albion Road, Edinburgh EH7 5QY",          phone:"0131 475 2354"},
+  {id:13, name:"City of Edinburgh Council Housing", type:"council",  city:"Edinburgh",  lat:55.9531, lng:-3.1883, addr:"Waverley Court, 4 East Market Street, EH8 8BG",           phone:"0131 200 2360"},
+  {id:14, name:"Trussell Trust — Edinburgh",        type:"food",     city:"Edinburgh",  lat:55.9441, lng:-3.2087, addr:"Gorgie Dalry, Edinburgh EH11",                            phone:"0131 442 4424"},
+  {id:15, name:"Salvation Army — Edinburgh",        type:"clothing", city:"Edinburgh",  lat:55.9511, lng:-3.1868, addr:"114 East Claremont Street, Edinburgh EH7 4LB",            phone:"0131 556 4450"},
+  {id:16, name:"Citizens Advice Edinburgh",         type:"advice",   city:"Edinburgh",  lat:55.9461, lng:-3.1903, addr:"58 Dundas Street, Edinburgh EH3 6QZ",                    phone:"0131 558 3591"},
+  {id:17, name:"Shelter Scotland — Edinburgh",      type:"advice",   city:"Edinburgh",  lat:55.9485, lng:-3.1975, addr:"Scotiabank House, 6 South Charlotte St, EH2 4AW",         phone:"0808 800 4444"},
+  {id:18, name:"NHS Lothian — Homeless Health",     type:"health",   city:"Edinburgh",  lat:55.9449, lng:-3.1823, addr:"Royal Mile, Edinburgh EH1 1SR",                           phone:"0131 537 9000"},
+  // DUNDEE
+  {id:19, name:"Dundee Cyrenians",                  type:"shelter",  city:"Dundee",     lat:56.4647, lng:-2.9815, addr:"15 Ward Road, Dundee DD1 1LX",                            phone:"01382 223444"},
+  {id:20, name:"Dundee City Council — Housing",     type:"council",  city:"Dundee",     lat:56.4613, lng:-2.9714, addr:"Dundee House, 50 North Lindsay St, DD1 1NF",              phone:"01382 435000"},
+  {id:21, name:"Trussell Trust — Dundee",           type:"food",     city:"Dundee",     lat:56.4625, lng:-2.9728, addr:"Stobswell Church, Dundee DD4",                            phone:"01382 456910"},
+  {id:22, name:"Salvation Army — Dundee",           type:"clothing", city:"Dundee",     lat:56.4635, lng:-2.9701, addr:"20 Meadowside, Dundee DD1 1EN",                          phone:"01382 227676"},
+  {id:23, name:"Citizens Advice — Dundee",          type:"advice",   city:"Dundee",     lat:56.4628, lng:-2.9745, addr:"6 Shore Terrace, Dundee DD1 3AH",                        phone:"01382 307480"},
+  // ABERDEEN
+  {id:24, name:"Aberdeen Cyrenians",                type:"shelter",  city:"Aberdeen",   lat:57.1497, lng:-2.0943, addr:"41 Chapel Street, Aberdeen AB10 1SN",                    phone:"01224 625553"},
+  {id:25, name:"Aberdeen City Council — Housing",   type:"council",  city:"Aberdeen",   lat:57.1478, lng:-2.1026, addr:"Marischal College, Broad Street, Aberdeen AB10 1AQ",      phone:"03000 200292"},
+  {id:26, name:"Trussell Trust — Aberdeen",         type:"food",     city:"Aberdeen",   lat:57.1442, lng:-2.0991, addr:"Mastrick, Aberdeen AB16",                                 phone:"01224 693545"},
+  {id:27, name:"Salvation Army — Aberdeen",         type:"clothing", city:"Aberdeen",   lat:57.1509, lng:-2.0978, addr:"38 Castle Street, Aberdeen AB11 5BB",                    phone:"01224 588021"},
+  // INVERNESS
+  {id:28, name:"Highland Council — Housing",        type:"council",  city:"Inverness",  lat:57.4778, lng:-4.2247, addr:"Glenurquhart Road, Inverness IV3 5NX",                   phone:"01349 886602"},
+  {id:29, name:"CATH Inverness Food Bank",          type:"food",     city:"Inverness",  lat:57.4793, lng:-4.2276, addr:"Church Street, Inverness IV1 1EU",                       phone:"01463 241354"},
+  {id:30, name:"Salvation Army — Inverness",        type:"clothing", city:"Inverness",  lat:57.4770, lng:-4.2253, addr:"Friars Lane, Inverness IV1 1RH",                         phone:"01463 232724"},
+  // PAISLEY
+  {id:31, name:"Renfrewshire Council — Housing",    type:"council",  city:"Paisley",    lat:55.8456, lng:-4.4238, addr:"Cotton Street, Paisley PA1 1LE",                          phone:"0300 300 0300"},
+  {id:32, name:"Salvation Army — Paisley",          type:"clothing", city:"Paisley",    lat:55.8461, lng:-4.4233, addr:"New Street, Paisley PA1 1XU",                             phone:"0141 889 4601"},
+  {id:33, name:"Trussell Trust — Paisley",          type:"food",     city:"Paisley",    lat:55.8449, lng:-4.4248, addr:"Paisley PA1",                                             phone:"0141 847 6336"},
+  // STIRLING
+  {id:34, name:"Stirling Council — Housing",        type:"council",  city:"Stirling",   lat:56.1165, lng:-3.9369, addr:"Viewforth, Stirling FK8 2ET",                             phone:"01786 404040"},
+  {id:35, name:"Trussell Trust — Stirling",         type:"food",     city:"Stirling",   lat:56.1138, lng:-3.9358, addr:"Stirling FK8",                                            phone:"01786 478668"},
+  // FIFE
+  {id:36, name:"Fife Council — Housing",            type:"council",  city:"Kirkcaldy",  lat:56.1132, lng:-3.1615, addr:"Fife House, North Street, Glenrothes KY7 5LT",           phone:"03451 550022"},
+  {id:37, name:"Shelter Scotland (National Line)",   type:"advice",   city:"Scotland",   lat:55.9021, lng:-3.5217, addr:"Call or visit scotland.shelter.org.uk",                  phone:"0808 800 4444"},
+];
+
+const TYPE_ICON  = {shelter:"🏠", food:"🍲", clothing:"🧥", advice:"⚖️", council:"🏛️", health:"🏥"};
+const TYPE_LABEL = {shelter:"Shelter", food:"Food", clothing:"Clothing", advice:"Advice", council:"Council", health:"Health"};
+const PIN_COLOR  = {shelter:"#0F7B6C", food:"#D97706", clothing:"#7C3AED", advice:"#1967D2", council:"#DC2626", health:"#059669"};
+
+const CITY_COORDS = {
+  glasgow:{lat:55.8617,lng:-4.2583}, edinburgh:{lat:55.9531,lng:-3.1883},
+  dundee:{lat:56.4647,lng:-2.9815},  aberdeen:{lat:57.1497,lng:-2.0943},
+  inverness:{lat:57.4778,lng:-4.2247},paisley:{lat:55.8456,lng:-4.4238},
+  stirling:{lat:56.1165,lng:-3.9369}, kirkcaldy:{lat:56.1132,lng:-3.1615},
+  perth:{lat:56.3950,lng:-3.4312},   falkirk:{lat:56.0019,lng:-3.7839},
+  livingston:{lat:55.8832,lng:-3.5216},ayr:{lat:55.4598,lng:-4.6290},
+  motherwell:{lat:55.7882,lng:-3.9894},hamilton:{lat:55.7772,lng:-4.0394},
+  greenock:{lat:55.9483,lng:-4.7500}, kilmarnock:{lat:55.6113,lng:-4.4956},
+  dumfries:{lat:55.0703,lng:-3.6051}, oban:{lat:56.4155,lng:-5.4722},
+  fort_william:{lat:56.8198,lng:-5.1052},
+};
+
+/* ── STATE ── */
+let map = null;
+let markers = [];
+let userMarker = null;
+let userLatLng = null;
+let currentFilter = "all";
+let allResults = [];
+let currentModalService = null;
+const chatHistory = [];
+let aiWaiting = false;
+
+/* ── AI SYSTEM PROMPT ── */
+const SYSTEM_PROMPT = `You are Refuge — the live AI signposting guide for refugeSeek Scotland. You listen, understand, and point people toward the right Scottish support organisations. You are warm, calm, non-judgemental, and direct.
+
+CRITICAL SAFEGUARDING RULES:
+1. SIGNPOSTING ONLY. Never state legal rights as absolute certainties. Use: "you may be entitled to...", "councils generally have a duty to...", "Shelter Scotland can confirm whether...". Never say "you WILL be housed" or "they CANNOT turn you away".
+2. NEVER CONFIRM SPECIFIC AVAILABILITY. Always add: "Please call directly to confirm availability before travelling."
+3. NEVER INVENT ADDRESSES OR PHONE NUMBERS. If unsure of a specific local service, direct to Shelter Scotland on 0808 800 4444.
+4. MAP AWARENESS: When a user mentions a location or asks about nearby services, mention: "I've updated the map on this page — scroll up to see nearby services with walking distances and directions."
+5. PROACTIVE CONNECT: After location-based answers, ask: "Would you like me to help you connect with the nearest service? Just say 'connect me' and I'll open the options."
+6. ALWAYS end with one verified phone number they can call right now.
+
+VERIFIED SCOTTISH SERVICES:
+- Shelter Scotland: 0808 800 4444 (free, 24/7)
+- Simon Community Scotland: 0800 027 7466 (free)
+- Citizens Advice Scotland: 0800 028 1456 (free)
+- NHS 24: 111 (free, 24/7)
+- Scottish Domestic Abuse Helpline: 0800 027 1234 (free, 24/7)
+- Bethany Christian Trust (Edinburgh): 0131 561 8930
+- Cyrenians (Edinburgh): 0131 475 2354
+- Glasgow City Mission: 0141 553 2777
+- Lodging House Mission Glasgow: 0141 552 0285
+
+SCOTTISH COUNCILS HOUSING EMERGENCY:
+- Glasgow: 0800 838 502
+- Edinburgh: 0131 200 2360
+- Dundee: 01382 435000
+- Aberdeen: 03000 200 292
+- Highland (Inverness): 01349 886602
+- Fife: 03451 550 022
+- Renfrewshire (Paisley): 0300 300 0300
+
+GENERAL HOUSING FRAMEWORK (always frame as general guidance):
+- Scotland abolished priority need in 2012 (Housing (Scotland) Act 2010) — broader duty than England
+- Scottish councils generally must carry out homelessness assessments and may provide temporary accommodation during the process
+- Local connection is generally not a barrier to applying in Scotland
+- Families with children and those fleeing domestic abuse may have additional protections
+
+Style: warm first, practical second. Short paragraphs. Max 200 words unless more is genuinely needed.`;
+
+/* ═══════════════════════════════════════════════════════
+   LEAFLET MAP
+═══════════════════════════════════════════════════════ */
+function initMap(lat, lng) {
+  if (map) {
+    map.setView([lat, lng], 14);
+    return;
+  }
+  document.getElementById("map-overlay").style.display = "none";
+  document.getElementById("leaflet-map").style.display = "block";
+
+  map = L.map("leaflet-map", {
+    center: [lat, lng],
+    zoom: 14,
+    zoomControl: true,
+    attributionControl: true
+  });
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
+  }).addTo(map);
+}
+
+function createIcon(type) {
+  const color = PIN_COLOR[type] || "#0F7B6C";
+  const icon = TYPE_ICON[type] || "📍";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+    <path d="M18 0C8.06 0 0 8.06 0 18c0 12.75 18 26 18 26S36 30.75 36 18C36 8.06 27.94 0 18 0z" fill="${color}"/>
+    <circle cx="18" cy="18" r="11" fill="white" opacity="0.95"/>
+    <text x="18" y="23" font-size="13" text-anchor="middle" font-family="serif">${icon}</text>
+  </svg>`;
+  return L.divIcon({
+    html: svg,
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -46],
+    className: ""
+  });
+}
+
+function createUserIcon() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill="#1D9E75" stroke="white" stroke-width="3"/>
+    <circle cx="12" cy="12" r="4" fill="white"/>
+  </svg>`;
+  return L.divIcon({
+    html: svg,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    className: ""
+  });
+}
+
+function placeMarkers(services, userPos) {
+  markers.forEach(m => m.remove());
+  markers = [];
+
+  services.forEach(s => {
+    const marker = L.marker([s.lat, s.lng], { icon: createIcon(s.type) }).addTo(map);
+    const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.addr)}&travelmode=walking`;
+    const wazeUrl  = `https://waze.com/ul?ll=${s.lat},${s.lng}&navigate=yes`;
+    const callHtml = s.phone ? `<a href="tel:${s.phone.replace(/\s/g,'')}" class="l-popup-btn call">📞 ${s.phone}</a>` : "";
+    marker.bindPopup(`
+      <div class="l-popup">
+        <div class="l-popup-name">${s.name}</div>
+        <div class="l-popup-addr">${s.addr}</div>
+        <div class="l-popup-actions">
+          ${callHtml}
+          <a href="${gmapsUrl}" target="_blank" rel="noopener" class="l-popup-btn gmaps">🗺️ Google Maps</a>
+          <a href="${wazeUrl}" target="_blank" rel="noopener" class="l-popup-btn waze">🚗 Waze</a>
+          <button class="l-popup-btn connect-b" onclick="openModal(${s.id})">Connect →</button>
+        </div>
+      </div>`, { maxWidth: 300 });
+    markers.push(marker);
+  });
+
+  if (userPos) {
+    if (userMarker) userMarker.remove();
+    userMarker = L.marker([userPos.lat, userPos.lng], {
+      icon: createUserIcon(),
+      zIndexOffset: 1000
+    }).addTo(map).bindPopup("<strong>Your location</strong>");
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOCATION & SEARCH
+═══════════════════════════════════════════════════════ */
+function geocodeCity(text) {
+  const t = text.toLowerCase().replace(/[^a-z\s]/g, "").trim();
+  for (const [key, coords] of Object.entries(CITY_COORDS)) {
+    if (t.includes(key.replace("_"," ")) || key.replace("_"," ").startsWith(t.split(" ")[0])) return coords;
+  }
+  // postcode prefix
+  const pc = text.toUpperCase().replace(/\s/g,"").substring(0,2);
+  const pcMap = {G:CITY_COORDS.glasgow,EH:CITY_COORDS.edinburgh,DD:CITY_COORDS.dundee,AB:CITY_COORDS.aberdeen,IV:CITY_COORDS.inverness,PA:CITY_COORDS.paisley,FK:CITY_COORDS.stirling,KY:CITY_COORDS.kirkcaldy,PH:CITY_COORDS.perth,KA:CITY_COORDS.ayr,ML:CITY_COORDS.motherwell,DG:CITY_COORDS.dumfries};
+  if (pcMap[pc]) return pcMap[pc];
+  const pc1 = text.toUpperCase().replace(/\s/g,"").substring(0,1);
+  return pcMap[pc1] || null;
+}
+
+function haversine(lat1,lng1,lat2,lng2){
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function loadArea(lat, lng, label) {
+  userLatLng = {lat, lng};
+  document.getElementById("loc-text").textContent = label || "Location detected";
+
+  let results = SERVICES.map(s => ({...s, dist: haversine(lat, lng, s.lat, s.lng)}));
+  results.sort((a,b) => a.dist - b.dist);
+  allResults = results.slice(0, 15);
+
+  initMap(lat, lng);
+  renderResults(applyFilter(allResults));
+  placeMarkers(applyFilter(allResults), {lat, lng});
+  document.getElementById("connect-prompt").style.display = "flex";
+  document.getElementById("map-section").scrollIntoView({behavior:"smooth"});
+}
+
+function requestGeoLocation() {
+  if (!navigator.geolocation) { document.getElementById("loc-text").textContent = "Geolocation not supported — enter postcode below"; return; }
+  document.getElementById("loc-text").textContent = "Detecting your location…";
+  navigator.geolocation.getCurrentPosition(
+    pos => loadArea(pos.coords.latitude, pos.coords.longitude, "📍 Location detected — showing nearby services"),
+    ()  => { document.getElementById("loc-text").textContent = "Location unavailable — enter your town or postcode"; }
+  );
+}
+
+function promptManualLocation() {
+  const loc = prompt("Enter your town, city or postcode in Scotland:");
+  if (!loc || !loc.trim()) return;
+  const coords = geocodeCity(loc.trim());
+  if (coords) { loadArea(coords.lat, coords.lng, "Area set: " + loc.trim()); }
+  else { alert("Location not recognised. Try a Scottish city (Glasgow, Edinburgh, Dundee) or postcode (G1, EH1, DD1)."); }
+}
+
+function mapSearch() {
+  const val = document.getElementById("map-search-input").value.trim();
+  if (!val) return;
+  const coords = geocodeCity(val);
+  if (coords) { loadArea(coords.lat, coords.lng, "Area: " + val); }
+  else { document.getElementById("map-results").innerHTML = `<div class="ms-empty"><strong>Location not recognised.</strong><br>Try a Scottish city name (Glasgow, Edinburgh, Dundee…) or postcode prefix (G1, EH1, DD1…).<br><br>Or call <strong>Shelter Scotland: 0808 800 4444</strong> who can advise on local services anywhere in Scotland.</div>`; }
+}
+
+function heroLocationSearch() {
+  const val = document.getElementById("hero-loc-input").value.trim();
+  if (!val) { document.getElementById("hero-loc-input").focus(); return; }
+  document.getElementById("map-search-input").value = val;
+  const coords = geocodeCity(val);
+  if (coords) { loadArea(coords.lat, coords.lng, "Area: " + val); }
+  else { heroChat("I am in " + val + " in Scotland. What support is available nearby for someone facing homelessness tonight?"); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FILTER & RESULTS
+═══════════════════════════════════════════════════════ */
+function applyFilter(results) {
+  return currentFilter === "all" ? results : results.filter(r => r.type === currentFilter);
+}
+
+function setFilter(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll(".mf-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  const filtered = applyFilter(allResults);
+  renderResults(filtered);
+  if (userLatLng) placeMarkers(filtered, userLatLng);
+}
+
+function renderResults(results) {
+  const container = document.getElementById("map-results");
+  if (!results.length) {
+    container.innerHTML = `<div class="ms-empty">No results for this filter in this area. Try <strong>All</strong> or a different location.</div>`;
+    return;
+  }
+  container.innerHTML = results.map(r => {
+    const km = r.dist || 0;
+    const walkMins = Math.round(km / 0.083);
+    const distStr = km < 0.1 ? "Very close" : km < 1 ? `${Math.round(km*1000)}m · ~${walkMins} min walk` : `${km.toFixed(1)}km · ~${walkMins} min walk`;
+    const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.addr)}&travelmode=walking`;
+    const wazeUrl  = `https://waze.com/ul?ll=${r.lat},${r.lng}&navigate=yes`;
+    const callBtn  = r.phone ? `<a href="tel:${r.phone.replace(/\s/g,'')}" class="ra call" onclick="event.stopPropagation()">📞 ${r.phone}</a>` : "";
+    return `
+    <div class="rc" id="rc-${r.id}" onclick="selectResult(${r.id})">
+      <div class="rc-top">
+        <span class="rc-icon">${TYPE_ICON[r.type]||"📍"}</span>
+        <span class="rc-name">${r.name}</span>
+        <span class="rc-badge ${r.type}">${TYPE_LABEL[r.type]||r.type}</span>
+      </div>
+      <div class="rc-addr">${r.addr}</div>
+      <div class="rc-dist">📍 ${distStr}</div>
+      <div class="rc-actions">
+        ${callBtn}
+        <a href="${gmapsUrl}" target="_blank" rel="noopener" class="ra gmaps" onclick="event.stopPropagation()">🗺️ Maps</a>
+        <a href="${wazeUrl}" target="_blank" rel="noopener" class="ra waze" onclick="event.stopPropagation()">🚗 Waze</a>
+        <button class="ra connect" onclick="event.stopPropagation();openModal(${r.id})">Connect →</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function selectResult(id) {
+  document.querySelectorAll(".rc").forEach(c => c.classList.remove("active"));
+  const card = document.getElementById("rc-" + id);
+  if (card) { card.classList.add("active"); card.scrollIntoView({behavior:"smooth",block:"nearest"}); }
+  const svc = SERVICES.find(s => s.id === id);
+  if (svc && map) {
+    map.setView([svc.lat, svc.lng], 16);
+    const marker = markers.find((m,i) => {
+      const pos = m.getLatLng();
+      return Math.abs(pos.lat - svc.lat) < 0.0001 && Math.abs(pos.lng - svc.lng) < 0.0001;
+    });
+    if (marker) marker.openPopup();
+  }
+  openModal(id);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONNECT MODAL
+═══════════════════════════════════════════════════════ */
+function openModal(id) {
+  const svc = SERVICES.find(s => s.id === id);
+  if (!svc) return;
+  currentModalService = svc;
+  document.getElementById("modal-org-name").textContent = svc.name;
+  document.getElementById("modal-org-phone").textContent = svc.phone || "See website for contact";
+  const callBtn = document.getElementById("modal-call-btn");
+  if (svc.phone) { callBtn.href = "tel:" + svc.phone.replace(/\s/g,""); callBtn.style.display = "flex"; }
+  else { callBtn.style.display = "none"; }
+  const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(svc.addr)}&travelmode=walking`;
+  const wazeUrl  = `https://waze.com/ul?ll=${svc.lat},${svc.lng}&navigate=yes`;
+  document.getElementById("modal-gmaps-btn").href = gmapsUrl;
+  document.getElementById("modal-waze-btn").href  = wazeUrl;
+  document.getElementById("modal-ai-btn").onclick  = () => { closeModal(); askAIAboutService(svc); };
+  document.getElementById("connect-modal").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("connect-modal").classList.remove("open");
+  currentModalService = null;
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+document.getElementById("connect-modal").addEventListener("click", e => { if (e.target === e.currentTarget) closeModal(); });
+
+function connectNearest() {
+  const filtered = applyFilter(allResults);
+  if (filtered.length > 0) openModal(filtered[0].id);
+}
+
+function askAIAboutService(svc) {
+  document.getElementById("chat-input").value = `Tell me about ${svc.name} at ${svc.addr}. What should I expect when I arrive and what should I say?`;
+  document.getElementById("chat-section").scrollIntoView({behavior:"smooth"});
+  setTimeout(sendMessage, 500);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHAT
+═══════════════════════════════════════════════════════ */
+function addMsg(role, text) {
+  const c = document.getElementById("chat-msgs");
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + role;
+  const av = document.createElement("div");
+  av.className = "m-av " + role;
+  av.textContent = role === "ai" ? "R" : "You";
+  av.setAttribute("aria-hidden","true");
+  const bub = document.createElement("div");
+  bub.className = "m-bub";
+  bub.textContent = text;
+  wrap.appendChild(av);
+  wrap.appendChild(bub);
+  c.appendChild(wrap);
+  c.scrollTop = c.scrollHeight;
+}
+
+function showTyping() {
+  const c = document.getElementById("chat-msgs");
+  const wrap = document.createElement("div");
+  wrap.className = "msg ai"; wrap.id = "typing-el";
+  const av = document.createElement("div");
+  av.className = "m-av ai"; av.textContent = "R"; av.setAttribute("aria-hidden","true");
+  const bub = document.createElement("div");
+  bub.className = "m-bub";
+  bub.innerHTML = '<div class="typing"><div class="td2"></div><div class="td2"></div><div class="td2"></div></div>';
+  wrap.appendChild(av); wrap.appendChild(bub);
+  c.appendChild(wrap); c.scrollTop = c.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById("typing-el");
+  if (el) el.remove();
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function chip(text) {
+  document.getElementById("chat-input").value = text;
+  sendMessage();
+}
+
+function heroChat(text) {
+  document.getElementById("chat-input").value = text;
+  document.getElementById("chat-section").scrollIntoView({behavior:"smooth"});
+  setTimeout(sendMessage, 600);
+}
+
+async function sendMessage() {
+  if (aiWaiting) return;
+  const input = document.getElementById("chat-input");
+  const rawText = input.value.trim();
+  if (!rawText) return;
+
+  // Intercept "connect me"
+  if (/^connect( me)?$/i.test(rawText)) {
+    input.value = "";
+    addMsg("user", rawText);
+    const filtered = applyFilter(allResults);
+    if (filtered.length > 0) {
+      openModal(filtered[0].id);
+      addMsg("ai", `Opening the connect options for ${filtered[0].name}. You can call them, get walking directions via Google Maps, or get driving directions via Waze.`);
+    } else {
+      addMsg("ai", "To connect you with the nearest service, I first need to know your location. Enter your town or postcode in the map section above, or allow location access.");
+    }
+    return;
+  }
+
+  // Auto-detect location mentions and update map
+  const locMatch = rawText.match(/\b(?:in|near|around|at|from)\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)/);
+  if (locMatch) {
+    const possibleLoc = locMatch[1];
+    const coords = geocodeCity(possibleLoc);
+    if (coords && !userLatLng) {
+      document.getElementById("map-search-input").value = possibleLoc;
+      loadArea(coords.lat, coords.lng, "Area: " + possibleLoc);
+    }
+  }
+
+  let msgForAI = rawText;
+  if (userLatLng && !rawText.toLowerCase().includes("scotland")) {
+    msgForAI = rawText + " [User area detected on map]";
+  }
+
+  chatHistory.push({role:"user", content: msgForAI});
+  input.value = "";
+  addMsg("user", rawText);
+  aiWaiting = true;
+  showTyping();
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours.";
+    chatHistory.push({role:"assistant", content: reply});
+    removeTyping();
+    addMsg("ai", reply);
+
+    // If map has results, show connect prompt after location-based answers
+    if (allResults.length > 0 && /where|near|find|shelter|food|clothing/i.test(rawText)) {
+      setTimeout(() => {
+        addMsg("ai", "The map above has been updated with nearby services — tap any result to get directions or connect directly. Or type 'connect me' and I'll open the options right now.");
+      }, 1400);
+    }
+
+  } catch(err) {
+    removeTyping();
+    const fallback = "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours, 7 days, trained advisors who know Scottish housing law inside out.";
+    chatHistory.push({role:"assistant", content: fallback});
+    addMsg("ai", fallback);
+  }
+  aiWaiting = false;
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+window.addEventListener("DOMContentLoaded", () => {
+  // Welcome message
+  addMsg("ai", "Hello. I'm Refuge — refugeSeek Scotland's live AI guide.\n\nI'm here to listen and point you toward the right support services. Tell me where you are in Scotland and what you need, and I'll update the map with nearby services and offer to help you connect directly.\n\nWhat's happening for you right now?");
+
+  // Try silent geolocation on load
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        loadArea(pos.coords.latitude, pos.coords.longitude, "📍 Location detected — map updated");
+      },
+      () => {} // silent fail — user can trigger manually
+    );
+  }
+});
+</script>
+</body>
+</html>
