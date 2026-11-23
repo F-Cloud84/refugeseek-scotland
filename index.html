@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="refugeSeek Scotland — Live AI-powered platform connecting people facing homelessness to emergency shelter, food, clothing and support across Scotland.">
-<title>refugeSeek Scotland — Live Demo</title>
+<title>refugeSeek Scotland — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -322,6 +322,12 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 .l-popup-btn.waze{background:#E6F7FF;color:#006BB4;}
 .l-popup-btn.connect-b{background:#1D9E75;color:white;}
 </style>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    /* Assistant hidden until ANTHROPIC_API_KEY is set on the server. Remove this rule to switch it back on. */
+    #chat-section, a[href="#chat-section"], #modal-ai-btn { display: none !important; }
+  </style>
 </head>
 <body>
 <a href="#chat-section" class="skip">Skip to AI chat</a>
@@ -333,7 +339,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 
 <!-- EMERGENCY BAR -->
 <div class="emergency-bar" role="alert" aria-live="assertive">
-  <strong>In immediate danger? Call 999</strong> &nbsp;·&nbsp; Homeless tonight in Scotland? <a href="tel:08088004444">Shelter Scotland: 0808 800 4444</a> — free, 24/7
+  <strong>In immediate danger? Call 999</strong> &nbsp;·&nbsp; Homeless tonight in Scotland? <a href="tel:08088004444">Shelter Scotland: 0808 800 4444</a> — free, Mon–Fri 9am–5pm, closed bank holidays. Out of hours, call 999 if you are in danger, or contact your council’s homelessness team.
 </div>
 
 <!-- NAV -->
@@ -344,7 +350,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
       <span class="logo-text">refuge<span>Seek</span></span>
     </a>
     <span class="nav-badge">Scotland</span>
-    <span class="live-dot"><span class="live-pulse"></span>Live Demo</span>
+    <span class="live-dot"><span class="live-pulse"></span>Prototype</span>
     <div class="nav-links">
       <a href="#chat-section" class="nav-link">AI Guide</a>
       <a href="#map-section" class="nav-link">Map</a>
@@ -372,7 +378,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
     <div>
       <div class="hero-eyebrow">Scotland's free crisis signposting platform</div>
       <h1 class="serif">You deserve<br><em>shelter tonight.</em><br>Let's find it.</h1>
-      <p class="hero-sub">refugeSeek connects people facing homelessness in Scotland to emergency shelter, food, clothing, legal guidance, and local support — through a live AI companion and real-time map. Free, confidential, 24/7.</p>
+      <p class="hero-sub">refugeSeek connects people facing homelessness in Scotland to emergency shelter, food, clothing, legal guidance, and local support — through a real-time map. Free, confidential, 24/7.</p>
       <div class="hero-actions">
         <a href="#chat-section" class="btn-p">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -457,7 +463,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
         </div>
         <div class="cs-stat">
           <div class="cs-num">Free</div>
-          <div class="cs-lbl">No sign-up. No data stored. Confidential.</div>
+          <div class="cs-lbl">No sign-up. Read how your messages are handled in our <a href="privacy.html">privacy statement</a>.</div>
         </div>
         <ul class="cs-bullets">
           <li><span class="cb-dot"></span>Scotland's housing rights framework — general guidance</li>
@@ -572,7 +578,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
     <h2 class="st">What to do if you need a bed tonight</h2>
     <p class="ss">General guidance based on publicly available information. Always contact services directly — availability varies and cannot be guaranteed in advance.</p>
     <div class="steps-grid">
-      <div class="step-c"><div class="step-n">1</div><div class="step-t">Call Shelter Scotland first</div><div class="step-b">0808 800 4444 — freephone, 24 hours. Trained advisors can help identify emergency accommodation options and explain how to approach your council. Always the most effective first step.</div><a href="tel:08088004444" class="step-a">Call free →</a></div>
+      <div class="step-c"><div class="step-n">1</div><div class="step-t">Call Shelter Scotland first</div><div class="step-b">0808 800 4444 — freephone, Mon–Fri 9am–5pm, closed bank holidays. Trained advisors can help identify emergency accommodation options and explain how to approach your council. Always the most effective first step.</div><a href="tel:08088004444" class="step-a">Call free →</a></div>
       <div class="step-c"><div class="step-n">2</div><div class="step-t">Approach your local council</div><div class="step-b">Scottish councils operate under a legal duty framework which means most people presenting as homeless may be offered temporary accommodation while their case is assessed. Ask to make a formal homelessness application.</div><div class="step-cav">Specific entitlements depend on individual circumstances — Shelter Scotland can advise.</div></div>
       <div class="step-c"><div class="step-n">3</div><div class="step-t">Contact Simon Community</div><div class="step-b">Call 0800 027 7466. In some Scottish cities, outreach workers may come to you. They can also help connect you to night shelters — call first to confirm availability tonight.</div><a href="tel:08000272466" class="step-a">Call free →</a></div>
       <div class="step-c"><div class="step-n">4</div><div class="step-t">Find food and warmth while you wait</div><div class="step-b">Many Salvation Army centres, churches, and community orgs offer free hot meals in the evenings. Ask Refuge AI or check the map for options near your area — then call ahead to confirm they are open.</div><a href="#map-section" class="step-a">Open the map →</a></div>
@@ -590,20 +596,20 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
     <div class="rights-caveat"><strong>Important:</strong> The content below is general guidance based on publicly available Scottish Government and Shelter Scotland material. It is not legal advice. Please speak to <strong>Shelter Scotland (0808 800 4444)</strong> or a qualified Scottish housing solicitor before acting. This content has not been verified by a solicitor.</div>
     <div class="rights-layout">
       <div>
-        <div class="ri"><div class="ri-t">Councils have a duty to assess your situation</div><div class="ri-b">When you present as homeless to a Scottish council, they are generally required to carry out a homelessness assessment. During this process, many people may be entitled to temporary accommodation depending on their circumstances.</div></div>
-        <div class="ri"><div class="ri-t">Families with children may have additional protections</div><div class="ri-b">Scottish housing legislation includes provisions that may give families with dependent children additional protections. Communicate this immediately when speaking to any council housing team.</div></div>
+        <div class="ri"><div class="ri-t">Councils must assess your situation</div><div class="ri-b">When you apply to a Scottish council as homeless, it must assess your application. Councils may provide temporary accommodation while they do this. What happens next depends on your circumstances.</div></div>
+        <div class="ri"><div class="ri-t">Tell the council if you have children</div><div class="ri-b">If you have children, tell the council when you apply. Ask Shelter Scotland how this affects your application.</div></div>
         <div class="ri"><div class="ri-t">You may have the right to appeal a decision</div><div class="ri-b">If a council makes a decision about your application that you believe is incorrect, you may be able to request a review. Time limits apply. Shelter Scotland and Citizens Advice can help you explore this.</div></div>
         <div class="ri"><div class="ri-t">NHS care should generally be accessible without a fixed address</div><div class="ri-b">NHS Scotland guidance indicates that GP practices should not refuse registration solely because a patient has no fixed address. If you encounter difficulty, contact NHS 24 on 111.</div></div>
-        <div class="ri"><div class="ri-t">Benefits may be available while homeless</div><div class="ri-b">Universal Credit and other benefits can in many cases be claimed without a permanent address. Citizens Advice Scotland can help you understand what you may be entitled to and help with the application.</div></div>
-        <div class="ri"><div class="ri-t">Local connection is generally not required</div><div class="ri-b">In many cases under Scottish housing law, you do not need a prior connection to an area to make a homelessness application there. Shelter Scotland can advise on how this applies to your situation.</div></div>
+        <div class="ri"><div class="ri-t">Benefits when you have no fixed address</div><div class="ri-b">Ask Citizens Advice Scotland or the Department for Work and Pensions how to claim benefits when you have no fixed address. They can explain what you may be eligible for.</div></div>
+        <div class="ri"><div class="ri-t">Local connection can affect where you apply</div><div class="ri-b">Scottish councils can refer a homeless application to another area where you have a local connection. Tell the council where you have lived before, and ask Shelter Scotland how this applies to you.</div></div>
       </div>
       <div>
         <div class="rights-hl">
           <div class="rh-eye">Scotland's legal framework — overview</div>
-          <div class="rh-q">"Scotland has some of the most protective homelessness legislation in Europe — but rights are only useful when someone helps you navigate them."</div>
-          <div class="rh-b">Scotland abolished the concept of "priority need" in 2012 under the Housing (Scotland) Act 2010. This means the scope of who Scottish councils must assist is broader than in England and Wales. However, individual eligibility depends on circumstances, and the law can be complex in practice.</div>
-          <div class="rh-law">Housing (Scotland) Act 1987 · Homelessness etc. (Scotland) Act 2003 · Housing (Scotland) Act 2010</div>
-          <div class="rh-cav">General overview only. Not verified by a qualified Scottish housing solicitor. Please speak to Shelter Scotland (0808 800 4444) for advice specific to your circumstances.</div>
+          <div class="rh-q">"Since 31 December 2012, the priority need test has been abolished for homeless households in Scotland."</div>
+          <div class="rh-b">The priority need test was abolished by the Homelessness (Abolition of Priority Need Test) (Scotland) Order 2012, which took effect on 31 December 2012. Individual eligibility still depends on your circumstances, and the law can be complex in practice.</div>
+          <div class="rh-law">Housing (Scotland) Act 1987 (Part II) · Homelessness etc. (Scotland) Act 2003 · Homelessness (Abolition of Priority Need Test) (Scotland) Order 2012</div>
+          <div class="rh-cav">General information only, not legal advice. For advice on your situation, call Shelter Scotland free on 0808 800 4444 (Mon–Fri 9am–5pm, closed bank holidays) or Citizens Advice Scotland on 0800 028 1456.</div>
         </div>
       </div>
     </div>
@@ -629,9 +635,9 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 <!-- FOOTER -->
 <footer>
   <div class="fi">
-    <div class="f-emerg"><strong>Key numbers always available:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
+    <div class="f-emerg"><strong>Key numbers:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
     <div class="f-top">
-      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Live Demo</span></div><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content under solicitor review before public launch.</p></div>
+      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Prototype</span></div><p><a href="privacy.html" style="color:rgba(255,255,255,.6)">Privacy statement</a></p><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content has not yet been reviewed by a solicitor.</p></div>
       <div><div class="f-col-t">Get help</div><ul class="f-links"><li><a href="#chat-section">Talk to Refuge AI</a></li><li><a href="#map-section">Find on map</a></li><li><a href="#support-section">Support near me</a></li><li><a href="#tonight-section">Help tonight</a></li><li><a href="#rights-section">Know my rights</a></li></ul></div>
       <div><div class="f-col-t">Key charities</div><ul class="f-links"><li><a href="https://scotland.shelter.org.uk" target="_blank" rel="noopener">Shelter Scotland</a></li><li><a href="https://www.simonscotland.org" target="_blank" rel="noopener">Simon Community</a></li><li><a href="https://www.cas.org.uk" target="_blank" rel="noopener">Citizens Advice Scotland</a></li><li><a href="https://www.trusselltrust.org" target="_blank" rel="noopener">Trussell Trust</a></li><li><a href="https://www.scottishwomensaid.org.uk" target="_blank" rel="noopener">Scottish Women's Aid</a></li></ul></div>
     </div>
@@ -641,7 +647,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
-   refugeSeek Scotland — Live Demo JavaScript
+   refugeSeek Scotland — Prototype JavaScript
    Full Leaflet map + AI chat + Connect modal + Directions
 ═══════════════════════════════════════════════════════════ */
 
@@ -723,43 +729,7 @@ const chatHistory = [];
 let aiWaiting = false;
 
 /* ── AI SYSTEM PROMPT ── */
-const SYSTEM_PROMPT = `You are Refuge — the live AI signposting guide for refugeSeek Scotland. You listen, understand, and point people toward the right Scottish support organisations. You are warm, calm, non-judgemental, and direct.
-
-CRITICAL SAFEGUARDING RULES:
-1. SIGNPOSTING ONLY. Never state legal rights as absolute certainties. Use: "you may be entitled to...", "councils generally have a duty to...", "Shelter Scotland can confirm whether...". Never say "you WILL be housed" or "they CANNOT turn you away".
-2. NEVER CONFIRM SPECIFIC AVAILABILITY. Always add: "Please call directly to confirm availability before travelling."
-3. NEVER INVENT ADDRESSES OR PHONE NUMBERS. If unsure of a specific local service, direct to Shelter Scotland on 0808 800 4444.
-4. MAP AWARENESS: When a user mentions a location or asks about nearby services, mention: "I've updated the map on this page — scroll up to see nearby services with walking distances and directions."
-5. PROACTIVE CONNECT: After location-based answers, ask: "Would you like me to help you connect with the nearest service? Just say 'connect me' and I'll open the options."
-6. ALWAYS end with one verified phone number they can call right now.
-
-VERIFIED SCOTTISH SERVICES:
-- Shelter Scotland: 0808 800 4444 (free, 24/7)
-- Simon Community Scotland: 0800 027 7466 (free)
-- Citizens Advice Scotland: 0800 028 1456 (free)
-- NHS 24: 111 (free, 24/7)
-- Scottish Domestic Abuse Helpline: 0800 027 1234 (free, 24/7)
-- Bethany Christian Trust (Edinburgh): 0131 561 8930
-- Cyrenians (Edinburgh): 0131 475 2354
-- Glasgow City Mission: 0141 553 2777
-- Lodging House Mission Glasgow: 0141 552 0285
-
-SCOTTISH COUNCILS HOUSING EMERGENCY:
-- Glasgow: 0800 838 502
-- Edinburgh: 0131 200 2360
-- Dundee: 01382 435000
-- Aberdeen: 03000 200 292
-- Highland (Inverness): 01349 886602
-- Fife: 03451 550 022
-- Renfrewshire (Paisley): 0300 300 0300
-
-GENERAL HOUSING FRAMEWORK (always frame as general guidance):
-- Scotland abolished priority need in 2012 (Housing (Scotland) Act 2010) — broader duty than England
-- Scottish councils generally must carry out homelessness assessments and may provide temporary accommodation during the process
-- Local connection is generally not a barrier to applying in Scotland
-- Families with children and those fleeing domestic abuse may have additional protections
-
-Style: warm first, practical second. Short paragraphs. Max 200 words unless more is genuinely needed.`;
+/* System prompt is held on the server (api/chat.js). */
 
 /* ═══════════════════════════════════════════════════════
    LEAFLET MAP
@@ -1106,9 +1076,7 @@ async function sendMessage() {
   }
 
   let msgForAI = rawText;
-  if (userLatLng && !rawText.toLowerCase().includes("scotland")) {
-    msgForAI = rawText + " [User area detected on map]";
-  }
+  // Location is not sent to the assistant.
 
   chatHistory.push({role:"user", content: msgForAI});
   input.value = "";
@@ -1117,18 +1085,13 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: chatHistory
-      })
+      body: JSON.stringify({ messages: chatHistory })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours.";
+    const reply = data.reply || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — open Mon–Fri 9am–5pm, closed bank holidays. In danger, call 999.";
     chatHistory.push({role:"assistant", content: reply});
     removeTyping();
     addMsg("ai", reply);
@@ -1142,7 +1105,7 @@ async function sendMessage() {
 
   } catch(err) {
     removeTyping();
-    const fallback = "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours, 7 days, trained advisors who know Scottish housing law inside out.";
+    const fallback = "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — open Mon–Fri 9am–5pm, closed bank holidays, with trained advisers who know Scottish housing law. In danger, call 999.";
     chatHistory.push({role:"assistant", content: fallback});
     addMsg("ai", fallback);
   }
@@ -1156,15 +1119,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Welcome message
   addMsg("ai", "Hello. I'm Refuge — refugeSeek Scotland's live AI guide.\n\nI'm here to listen and point you toward the right support services. Tell me where you are in Scotland and what you need, and I'll update the map with nearby services and offer to help you connect directly.\n\nWhat's happening for you right now?");
 
-  // Try silent geolocation on load
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        loadArea(pos.coords.latitude, pos.coords.longitude, "📍 Location detected — map updated");
-      },
-      () => {} // silent fail — user can trigger manually
-    );
-  }
+  // Location is only requested when the user presses "Use my location".
 });
 </script>
 </body>
