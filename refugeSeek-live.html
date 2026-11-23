@@ -457,7 +457,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
         </div>
         <div class="cs-stat">
           <div class="cs-num">Free</div>
-          <div class="cs-lbl">No sign-up. No data stored. Confidential.</div>
+          <div class="cs-lbl">No sign-up. Read how your messages are handled in our <a href="privacy.html">privacy statement</a>.</div>
         </div>
         <ul class="cs-bullets">
           <li><span class="cb-dot"></span>Scotland's housing rights framework — general guidance</li>
@@ -631,7 +631,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
   <div class="fi">
     <div class="f-emerg"><strong>Key numbers always available:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
     <div class="f-top">
-      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Prototype</span></div><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content under solicitor review before public launch.</p></div>
+      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Prototype</span></div><p><a href="privacy.html" style="color:rgba(255,255,255,.6)">Privacy statement</a></p><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content has not yet been reviewed by a solicitor.</p></div>
       <div><div class="f-col-t">Get help</div><ul class="f-links"><li><a href="#chat-section">Talk to Refuge AI</a></li><li><a href="#map-section">Find on map</a></li><li><a href="#support-section">Support near me</a></li><li><a href="#tonight-section">Help tonight</a></li><li><a href="#rights-section">Know my rights</a></li></ul></div>
       <div><div class="f-col-t">Key charities</div><ul class="f-links"><li><a href="https://scotland.shelter.org.uk" target="_blank" rel="noopener">Shelter Scotland</a></li><li><a href="https://www.simonscotland.org" target="_blank" rel="noopener">Simon Community</a></li><li><a href="https://www.cas.org.uk" target="_blank" rel="noopener">Citizens Advice Scotland</a></li><li><a href="https://www.trusselltrust.org" target="_blank" rel="noopener">Trussell Trust</a></li><li><a href="https://www.scottishwomensaid.org.uk" target="_blank" rel="noopener">Scottish Women's Aid</a></li></ul></div>
     </div>
@@ -723,43 +723,7 @@ const chatHistory = [];
 let aiWaiting = false;
 
 /* ── AI SYSTEM PROMPT ── */
-const SYSTEM_PROMPT = `You are Refuge — the live AI signposting guide for refugeSeek Scotland. You listen, understand, and point people toward the right Scottish support organisations. You are warm, calm, non-judgemental, and direct.
-
-CRITICAL SAFEGUARDING RULES:
-1. SIGNPOSTING ONLY. Never state legal rights as absolute certainties. Use: "you may be entitled to...", "councils generally have a duty to...", "Shelter Scotland can confirm whether...". Never say "you WILL be housed" or "they CANNOT turn you away".
-2. NEVER CONFIRM SPECIFIC AVAILABILITY. Always add: "Please call directly to confirm availability before travelling."
-3. NEVER INVENT ADDRESSES OR PHONE NUMBERS. If unsure of a specific local service, direct to Shelter Scotland on 0808 800 4444.
-4. MAP AWARENESS: When a user mentions a location or asks about nearby services, mention: "I've updated the map on this page — scroll up to see nearby services with walking distances and directions."
-5. PROACTIVE CONNECT: After location-based answers, ask: "Would you like me to help you connect with the nearest service? Just say 'connect me' and I'll open the options."
-6. ALWAYS end with one verified phone number they can call right now.
-
-VERIFIED SCOTTISH SERVICES:
-- Shelter Scotland: 0808 800 4444 (free, 24/7)
-- Simon Community Scotland: 0800 027 7466 (free)
-- Citizens Advice Scotland: 0800 028 1456 (free)
-- NHS 24: 111 (free, 24/7)
-- Scottish Domestic Abuse Helpline: 0800 027 1234 (free, 24/7)
-- Bethany Christian Trust (Edinburgh): 0131 561 8930
-- Cyrenians (Edinburgh): 0131 475 2354
-- Glasgow City Mission: 0141 553 2777
-- Lodging House Mission Glasgow: 0141 552 0285
-
-SCOTTISH COUNCILS HOUSING EMERGENCY:
-- Glasgow: 0800 838 502
-- Edinburgh: 0131 200 2360
-- Dundee: 01382 435000
-- Aberdeen: 03000 200 292
-- Highland (Inverness): 01349 886602
-- Fife: 03451 550 022
-- Renfrewshire (Paisley): 0300 300 0300
-
-GENERAL HOUSING FRAMEWORK (always frame as general guidance):
-- Scotland abolished priority need in 2012 (Housing (Scotland) Act 2010) — broader duty than England
-- Scottish councils generally must carry out homelessness assessments and may provide temporary accommodation during the process
-- Local connection is generally not a barrier to applying in Scotland
-- Families with children and those fleeing domestic abuse may have additional protections
-
-Style: warm first, practical second. Short paragraphs. Max 200 words unless more is genuinely needed.`;
+/* System prompt is held on the server (api/chat.js). */
 
 /* ═══════════════════════════════════════════════════════
    LEAFLET MAP
@@ -1115,18 +1079,13 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: chatHistory
-      })
+      body: JSON.stringify({ messages: chatHistory })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours.";
+    const reply = data.reply || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours.";
     chatHistory.push({role:"assistant", content: reply});
     removeTyping();
     addMsg("ai", reply);
