@@ -339,7 +339,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 
 <!-- EMERGENCY BAR -->
 <div class="emergency-bar" role="alert" aria-live="assertive">
-  <strong>In immediate danger? Call 999</strong> &nbsp;·&nbsp; Homeless tonight in Scotland? <a href="tel:08088004444">Shelter Scotland: 0808 800 4444</a> — free, 24/7
+  <strong>In immediate danger? Call 999</strong> &nbsp;·&nbsp; Homeless tonight in Scotland? <a href="tel:08088004444">Shelter Scotland: 0808 800 4444</a> — free, Mon–Fri 9am–5pm, closed bank holidays. Out of hours, call 999 if you are in danger, or contact your council’s homelessness team.
 </div>
 
 <!-- NAV -->
@@ -578,7 +578,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
     <h2 class="st">What to do if you need a bed tonight</h2>
     <p class="ss">General guidance based on publicly available information. Always contact services directly — availability varies and cannot be guaranteed in advance.</p>
     <div class="steps-grid">
-      <div class="step-c"><div class="step-n">1</div><div class="step-t">Call Shelter Scotland first</div><div class="step-b">0808 800 4444 — freephone, 24 hours. Trained advisors can help identify emergency accommodation options and explain how to approach your council. Always the most effective first step.</div><a href="tel:08088004444" class="step-a">Call free →</a></div>
+      <div class="step-c"><div class="step-n">1</div><div class="step-t">Call Shelter Scotland first</div><div class="step-b">0808 800 4444 — freephone, Mon–Fri 9am–5pm, closed bank holidays. Trained advisors can help identify emergency accommodation options and explain how to approach your council. Always the most effective first step.</div><a href="tel:08088004444" class="step-a">Call free →</a></div>
       <div class="step-c"><div class="step-n">2</div><div class="step-t">Approach your local council</div><div class="step-b">Scottish councils operate under a legal duty framework which means most people presenting as homeless may be offered temporary accommodation while their case is assessed. Ask to make a formal homelessness application.</div><div class="step-cav">Specific entitlements depend on individual circumstances — Shelter Scotland can advise.</div></div>
       <div class="step-c"><div class="step-n">3</div><div class="step-t">Contact Simon Community</div><div class="step-b">Call 0800 027 7466. In some Scottish cities, outreach workers may come to you. They can also help connect you to night shelters — call first to confirm availability tonight.</div><a href="tel:08000272466" class="step-a">Call free →</a></div>
       <div class="step-c"><div class="step-n">4</div><div class="step-t">Find food and warmth while you wait</div><div class="step-b">Many Salvation Army centres, churches, and community orgs offer free hot meals in the evenings. Ask Refuge AI or check the map for options near your area — then call ahead to confirm they are open.</div><a href="#map-section" class="step-a">Open the map →</a></div>
@@ -609,7 +609,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
           <div class="rh-q">"Since 31 December 2012, the priority need test has been abolished for homeless households in Scotland."</div>
           <div class="rh-b">The priority need test was abolished by the Homelessness (Abolition of Priority Need Test) (Scotland) Order 2012, which took effect on 31 December 2012. Individual eligibility still depends on your circumstances, and the law can be complex in practice.</div>
           <div class="rh-law">Housing (Scotland) Act 1987 (Part II) · Homelessness etc. (Scotland) Act 2003 · Homelessness (Abolition of Priority Need Test) (Scotland) Order 2012</div>
-          <div class="rh-cav">General information only, not legal advice. For advice on your situation, call Shelter Scotland free on 0808 800 4444 (24/7) or Citizens Advice Scotland on 0800 028 1456.</div>
+          <div class="rh-cav">General information only, not legal advice. For advice on your situation, call Shelter Scotland free on 0808 800 4444 (Mon–Fri 9am–5pm, closed bank holidays) or Citizens Advice Scotland on 0800 028 1456.</div>
         </div>
       </div>
     </div>
@@ -635,7 +635,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 <!-- FOOTER -->
 <footer>
   <div class="fi">
-    <div class="f-emerg"><strong>Key numbers always available:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
+    <div class="f-emerg"><strong>Key numbers:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
     <div class="f-top">
       <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Prototype</span></div><p><a href="privacy.html" style="color:rgba(255,255,255,.6)">Privacy statement</a></p><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content has not yet been reviewed by a solicitor.</p></div>
       <div><div class="f-col-t">Get help</div><ul class="f-links"><li><a href="#chat-section">Talk to Refuge AI</a></li><li><a href="#map-section">Find on map</a></li><li><a href="#support-section">Support near me</a></li><li><a href="#tonight-section">Help tonight</a></li><li><a href="#rights-section">Know my rights</a></li></ul></div>
@@ -1091,7 +1091,7 @@ async function sendMessage() {
       body: JSON.stringify({ messages: chatHistory })
     });
     const data = await res.json();
-    const reply = data.reply || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours.";
+    const reply = data.reply || "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — open Mon–Fri 9am–5pm, closed bank holidays. In danger, call 999.";
     chatHistory.push({role:"assistant", content: reply});
     removeTyping();
     addMsg("ai", reply);
@@ -1105,7 +1105,7 @@ async function sendMessage() {
 
   } catch(err) {
     removeTyping();
-    const fallback = "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — available 24 hours, 7 days, trained advisors who know Scottish housing law inside out.";
+    const fallback = "I'm having trouble connecting right now. Please call Shelter Scotland free on 0808 800 4444 — open Mon–Fri 9am–5pm, closed bank holidays, with trained advisers who know Scottish housing law. In danger, call 999.";
     chatHistory.push({role:"assistant", content: fallback});
     addMsg("ai", fallback);
   }

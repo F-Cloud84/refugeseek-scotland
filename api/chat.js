@@ -14,7 +14,7 @@ CRITICAL SAFEGUARDING RULES:
 6. ALWAYS end with one verified phone number they can call right now.
 
 VERIFIED SCOTTISH SERVICES:
-- Shelter Scotland: 0808 800 4444 (free, 24/7)
+- Shelter Scotland: 0808 800 4444 (free, Mon–Fri 9am–5pm, closed bank holidays)
 - Simon Community Scotland: 0800 027 7466 (free)
 - Citizens Advice Scotland: 0800 028 1456 (free)
 - NHS 24: 111 (free, 24/7)
