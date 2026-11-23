@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="refugeSeek Scotland — Live AI-powered platform connecting people facing homelessness to emergency shelter, food, clothing and support across Scotland.">
-<title>refugeSeek Scotland — Live Demo</title>
+<title>refugeSeek Scotland — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -344,7 +344,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
       <span class="logo-text">refuge<span>Seek</span></span>
     </a>
     <span class="nav-badge">Scotland</span>
-    <span class="live-dot"><span class="live-pulse"></span>Live Demo</span>
+    <span class="live-dot"><span class="live-pulse"></span>Prototype</span>
     <div class="nav-links">
       <a href="#chat-section" class="nav-link">AI Guide</a>
       <a href="#map-section" class="nav-link">Map</a>
@@ -631,7 +631,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
   <div class="fi">
     <div class="f-emerg"><strong>Key numbers always available:</strong> &nbsp;Shelter Scotland 0808 800 4444 · Simon Community 0800 027 7466 · Citizens Advice 0800 028 1456 · NHS 24: 111 · Domestic Abuse: 0800 027 1234 · Emergency: 999</div>
     <div class="f-top">
-      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Live Demo</span></div><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content under solicitor review before public launch.</p></div>
+      <div class="f-brand"><div class="f-brand-wm">refuge<span>Seek</span> <span style="font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);font-weight:400">Scotland · Prototype</span></div><p>Free, confidential, AI-powered signposting for people facing homelessness in Scotland. Built with care. Available 24/7.</p><p style="margin-top:9px;font-size:11px;color:rgba(255,255,255,.28)">General guidance only. Not a substitute for legal or professional advice. Legal content under solicitor review before public launch.</p></div>
       <div><div class="f-col-t">Get help</div><ul class="f-links"><li><a href="#chat-section">Talk to Refuge AI</a></li><li><a href="#map-section">Find on map</a></li><li><a href="#support-section">Support near me</a></li><li><a href="#tonight-section">Help tonight</a></li><li><a href="#rights-section">Know my rights</a></li></ul></div>
       <div><div class="f-col-t">Key charities</div><ul class="f-links"><li><a href="https://scotland.shelter.org.uk" target="_blank" rel="noopener">Shelter Scotland</a></li><li><a href="https://www.simonscotland.org" target="_blank" rel="noopener">Simon Community</a></li><li><a href="https://www.cas.org.uk" target="_blank" rel="noopener">Citizens Advice Scotland</a></li><li><a href="https://www.trusselltrust.org" target="_blank" rel="noopener">Trussell Trust</a></li><li><a href="https://www.scottishwomensaid.org.uk" target="_blank" rel="noopener">Scottish Women's Aid</a></li></ul></div>
     </div>
@@ -641,7 +641,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
-   refugeSeek Scotland — Live Demo JavaScript
+   refugeSeek Scotland — Prototype JavaScript
    Full Leaflet map + AI chat + Connect modal + Directions
 ═══════════════════════════════════════════════════════════ */
 
@@ -1106,9 +1106,7 @@ async function sendMessage() {
   }
 
   let msgForAI = rawText;
-  if (userLatLng && !rawText.toLowerCase().includes("scotland")) {
-    msgForAI = rawText + " [User area detected on map]";
-  }
+  // Location is not sent to the assistant.
 
   chatHistory.push({role:"user", content: msgForAI});
   input.value = "";
@@ -1156,15 +1154,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Welcome message
   addMsg("ai", "Hello. I'm Refuge — refugeSeek Scotland's live AI guide.\n\nI'm here to listen and point you toward the right support services. Tell me where you are in Scotland and what you need, and I'll update the map with nearby services and offer to help you connect directly.\n\nWhat's happening for you right now?");
 
-  // Try silent geolocation on load
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        loadArea(pos.coords.latitude, pos.coords.longitude, "📍 Location detected — map updated");
-      },
-      () => {} // silent fail — user can trigger manually
-    );
-  }
+  // Location is only requested when the user presses "Use my location".
 });
 </script>
 </body>
