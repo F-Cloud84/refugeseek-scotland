@@ -324,6 +324,10 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 </style>
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
   <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    /* Assistant hidden until ANTHROPIC_API_KEY is set on the server. Remove this rule to switch it back on. */
+    #chat-section, a[href="#chat-section"], #modal-ai-btn { display: none !important; }
+  </style>
 </head>
 <body>
 <a href="#chat-section" class="skip">Skip to AI chat</a>
@@ -374,7 +378,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
     <div>
       <div class="hero-eyebrow">Scotland's free crisis signposting platform</div>
       <h1 class="serif">You deserve<br><em>shelter tonight.</em><br>Let's find it.</h1>
-      <p class="hero-sub">refugeSeek connects people facing homelessness in Scotland to emergency shelter, food, clothing, legal guidance, and local support — through a live AI companion and real-time map. Free, confidential, 24/7.</p>
+      <p class="hero-sub">refugeSeek connects people facing homelessness in Scotland to emergency shelter, food, clothing, legal guidance, and local support — through a real-time map. Free, confidential, 24/7.</p>
       <div class="hero-actions">
         <a href="#chat-section" class="btn-p">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
