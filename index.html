@@ -46,7 +46,13 @@ nav{background:var(--white);border-bottom:1px solid var(--border);position:stick
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;height:58px;gap:18px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-mark{width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
-.logo-mark svg{width:36px;height:36px;}
+.logo-mark svg{width:36px;height:36px;overflow:visible;}
+.logo-mark .arc-l{transform:translateX(-7px);animation:arcIn 1.6s cubic-bezier(.22,.8,.3,1) .2s forwards;}
+.logo-mark .arc-r{transform:translateX(7px);animation:arcIn 1.6s cubic-bezier(.22,.8,.3,1) .2s forwards;}
+.logo-mark .dot{transform-origin:20px 20px;transform:scale(0);animation:dotIn .5s ease-out 1.6s forwards;}
+@keyframes arcIn{to{transform:translateX(0);}}
+@keyframes dotIn{to{transform:scale(1);}}
+@media (prefers-reduced-motion: reduce){.logo-mark .arc-l,.logo-mark .arc-r{animation:none;transform:none;}.logo-mark .dot{animation:none;transform:none;}}
 .logo-text{font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:18px;color:var(--slate);letter-spacing:-.01em;}
 .logo-text span{color:var(--teal);}
 .nav-badge{font-size:10px;font-weight:600;background:var(--teal-light);color:var(--teal-dark);padding:2px 7px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;}
@@ -388,7 +394,7 @@ h1,h2,h3,h4,.st,.serif,.ph-t,.step-t,.ri-t,.sc-name,.rh-q{font-family:'DM Sans',
 <nav aria-label="Main navigation">
   <div class="nav-inner">
     <a href="#" class="nav-logo" aria-label="refugeSeek Scotland">
-      <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M11 4C2 10 2 30 11 36" fill="none" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/><path d="M29 4C38 10 38 30 29 36" fill="none" stroke="#0F6E56" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="2.6" fill="#1D9E75"/></svg></div>
+      <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path class="arc-l" d="M11 4C2 10 2 30 11 36" fill="none" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/><path class="arc-r" d="M29 4C38 10 38 30 29 36" fill="none" stroke="#0F6E56" stroke-width="3" stroke-linecap="round"/><circle class="dot" cx="20" cy="20" r="2.6" fill="#1D9E75"/></svg></div>
       <span class="logo-text">refuge<span>Seek</span></span>
     </a>
     <span class="nav-badge">Scotland</span>
