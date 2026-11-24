@@ -920,9 +920,19 @@ function promptManualLocation() {
   else { alert("Location not recognised. Try a Scottish city (Glasgow, Edinburgh, Dundee) or postcode (G1, EH1, DD1)."); }
 }
 
+// Anonymous usage counts via Vercel Web Analytics custom events (no personal data)
+function track(name) {
+  try { if (window.va) window.va("event", { name: name }); } catch (e) {}
+}
+document.addEventListener("click", function (e) {
+  if (e.target.closest("#modal-call-btn")) track("call_service");
+  if (e.target.closest("#modal-gmaps-btn")) track("open_directions");
+});
+
 function mapSearch() {
   const val = document.getElementById("map-search-input").value.trim();
   if (!val) return;
+  track("map_search");
   const coords = geocodeCity(val);
   if (coords) { loadArea(coords.lat, coords.lng, "Area: " + val); }
   else { document.getElementById("map-results").innerHTML = `<div class="ms-empty"><strong>Location not recognised.</strong><br>Try a Scottish city name (Glasgow, Edinburgh, Dundee…) or postcode prefix (G1, EH1, DD1…).<br><br>Or call <strong>Shelter Scotland: 0808 800 4444</strong> who can advise on local services anywhere in Scotland.</div>`; }
@@ -986,6 +996,7 @@ function renderResults(results) {
 }
 
 function selectResult(id) {
+  track("service_selected");
   document.querySelectorAll(".rc").forEach(c => c.classList.remove("active"));
   const card = document.getElementById("rc-" + id);
   if (card) { card.classList.add("active"); card.scrollIntoView({behavior:"smooth",block:"nearest"}); }
@@ -1098,6 +1109,7 @@ async function sendMessage() {
   const input = document.getElementById("chat-input");
   const rawText = input.value.trim();
   if (!rawText) return;
+  track("chat_message");
 
   // Intercept "connect me"
   if (/^connect( me)?$/i.test(rawText)) {
