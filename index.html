@@ -6,9 +6,6 @@
 <meta name="description" content="Free map of homelessness services in Scotland: emergency shelter, food, clothing and support. refugeSeek Scotland is a free, non-commercial beta.">
 <link rel="canonical" href="https://refugeeseek.online/">
 <title>refugeSeek Scotland | Homelessness Services Map</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 /* ── TOKENS ── */
@@ -26,7 +23,8 @@
 html{scroll-behavior:smooth;font-size:16px;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--mist);color:var(--text-body);line-height:1.65;}
 /* ── TYPE ── */
-.serif{font-family:'DM Serif Display',Georgia,serif;}
+.serif{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:600;letter-spacing:-.01em;}
+.serif em{font-style:normal;}
 h1,h2,h3{color:var(--slate);}
 /* ── SKIP ── */
 .skip{position:absolute;top:-40px;left:0;background:var(--teal);color:#fff;padding:8px 16px;z-index:9999;border-radius:0 0 8px 0;font-size:14px;transition:top .2s;}
@@ -46,7 +44,7 @@ nav{background:var(--white);border-bottom:1px solid var(--border);position:stick
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-mark{width:33px;height:33px;background:var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center;}
 .logo-mark svg{width:17px;height:17px;fill:none;stroke:white;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.logo-text{font-family:'DM Serif Display',serif;font-size:18px;color:var(--slate);letter-spacing:-.01em;}
+.logo-text{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;color:var(--slate);letter-spacing:-.01em;}
 .logo-text span{color:var(--teal);}
 .nav-badge{font-size:10px;font-weight:600;background:var(--teal-light);color:var(--teal-dark);padding:2px 7px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;}
 .live-dot{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:#059669;background:#ECFDF5;padding:2px 8px;border-radius:4px;}
@@ -70,7 +68,7 @@ nav{background:var(--white);border-bottom:1px solid var(--border);position:stick
 .hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 400px;gap:44px;align-items:center;position:relative;z-index:1;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9FE1CB;margin-bottom:14px;}
 .hero-eyebrow::before{content:'';display:block;width:16px;height:1.5px;background:#5DCAA5;}
-.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,54px);color:white;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px;}
+.hero h1{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:clamp(32px,5vw,54px);color:white;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px;}
 .hero h1 em{font-style:italic;color:#5DCAA5;}
 .hero-sub{font-size:15px;color:rgba(255,255,255,.70);max-width:480px;line-height:1.65;margin-bottom:24px;}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;}
@@ -104,14 +102,14 @@ nav{background:var(--white);border-bottom:1px solid var(--border);position:stick
 section{padding:clamp(36px,5vw,68px) clamp(14px,4vw,48px);}
 .si{max-width:1100px;margin:0 auto;}
 .sl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
-.st{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,36px);color:var(--slate);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;}
+.st{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:clamp(24px,3.5vw,36px);color:var(--slate);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;}
 .ss{font-size:15px;color:var(--text-muted);max-width:520px;line-height:1.6;margin-bottom:30px;}
 /* ── CHAT SECTION ── */
 #chat-section{background:var(--white);}
 .chat-layout{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start;}
 .chat-sidebar{}
 .cs-stat{background:var(--mist);border-radius:var(--radius);padding:14px;margin-bottom:12px;border:1px solid var(--border);}
-.cs-num{font-family:'DM Serif Display',serif;font-size:30px;color:var(--teal-dark);}
+.cs-num{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:30px;color:var(--teal-dark);}
 .cs-lbl{font-size:12.5px;color:var(--text-muted);margin-top:1px;}
 .cs-disclaimer{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:12px 14px;font-size:12.5px;color:var(--warn-text);line-height:1.55;margin-bottom:12px;}
 .cs-disclaimer strong{font-weight:600;color:#92400E;}
@@ -260,7 +258,7 @@ section{padding:clamp(36px,5vw,68px) clamp(14px,4vw,48px);}
 #tonight-section .ss{color:rgba(255,255,255,.62);max-width:100%;}
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px;}
 .step-c{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:var(--radius-lg);padding:20px;}
-.step-n{font-family:'DM Serif Display',serif;font-size:40px;color:rgba(93,202,165,.25);line-height:1;margin-bottom:6px;}
+.step-n{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:40px;color:rgba(93,202,165,.25);line-height:1;margin-bottom:6px;}
 .step-t{font-size:14px;font-weight:600;color:white;margin-bottom:6px;}
 .step-b{font-size:12.5px;color:rgba(255,255,255,.60);line-height:1.6;}
 .step-cav{font-size:11px;color:rgba(255,255,255,.36);margin-top:8px;font-style:italic;}
@@ -277,7 +275,7 @@ section{padding:clamp(36px,5vw,68px) clamp(14px,4vw,48px);}
 .ri-b{font-size:13px;color:var(--text-muted);line-height:1.6;}
 .rights-hl{background:var(--teal-dark);border-radius:var(--radius-lg);padding:24px;color:white;position:sticky;top:80px;}
 .rh-eye{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#9FE1CB;margin-bottom:12px;}
-.rh-q{font-family:'DM Serif Display',serif;font-size:17px;line-height:1.45;color:white;margin-bottom:12px;font-style:italic;}
+.rh-q{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.45;color:white;margin-bottom:12px;font-style:italic;}
 .rh-b{font-size:13px;color:rgba(255,255,255,.66);line-height:1.6;margin-bottom:12px;}
 .rh-law{font-size:11px;color:#5DCAA5;font-weight:500;margin-bottom:12px;}
 .rh-cav{font-size:11px;color:rgba(255,255,255,.40);font-style:italic;line-height:1.5;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;}
@@ -299,7 +297,7 @@ footer{background:var(--teal-deep);color:rgba(255,255,255,.58);padding:clamp(28p
 .f-emerg{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:var(--radius);padding:12px 16px;margin-bottom:24px;font-size:13px;color:rgba(255,255,255,.76);}
 .f-emerg strong{color:white;}
 .f-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:28px;}
-.f-brand-wm{font-family:'DM Serif Display',serif;font-size:18px;color:white;margin-bottom:8px;}
+.f-brand-wm{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;color:white;margin-bottom:8px;}
 .f-brand-wm span{color:#5DCAA5;}
 .f-brand p{font-size:12.5px;line-height:1.6;max-width:250px;}
 .f-col-t{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.30);margin-bottom:10px;}
